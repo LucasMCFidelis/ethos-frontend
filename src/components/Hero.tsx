@@ -2,10 +2,13 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-const Hero = () => {
+interface HeroProps {
+  onStartQuiz?: () => void;
+}
+
+const Hero = ({ onStartQuiz }: HeroProps) => {
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
-      {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 right-0 h-[500px] w-[500px] rounded-full bg-primary-100 blur-3xl" />
         <div className="absolute -bottom-40 left-0 h-[400px] w-[400px] rounded-full bg-secondary-100 blur-3xl" />
@@ -27,9 +30,7 @@ const Hero = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="max-w-3xl text-foreground sm:text-5xl md:text-6xl"
         >
-          Decisões éticas com{" "}
-          <span className="text-primary">clareza</span> e{" "}
-          <span className="text-primary">praticidade</span>
+          Simulador de Decisões Éticas em Telemedicina
         </motion.h1>
 
         <motion.p
@@ -38,8 +39,8 @@ const Hero = () => {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-6 max-w-xl text-body-lg text-muted-foreground"
         >
-          Apoie sua equipe na tomada de decisões éticas em tecnologia.
-          Consulte diretrizes, analise cenários e atue com confiança.
+          Identifique dilemas éticos na sua prática profissional e compreenda o
+          impacto social das suas decisões em ambientes de telemedicina.
         </motion.p>
 
         <motion.div
@@ -48,8 +49,14 @@ const Hero = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10"
         >
-          <Button variant="cta" size="lg" data-test="hero-button-cta" className="text-base px-8 py-6 gap-2 shadow-md">
-            Explorar plataforma
+          <Button
+            variant="cta"
+            size="lg"
+            data-test="hero-button-cta"
+            className="text-base px-8 py-6 gap-2 shadow-md"
+            onClick={onStartQuiz}
+          >
+            Iniciar Simulação
             <ArrowRight size={18} />
           </Button>
         </motion.div>
