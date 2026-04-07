@@ -1,38 +1,61 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+interface HeaderProps {
+  onNavigate?: (section: string) => void;
+  onStartQuiz?: () => void;
+}
 
 const navLinks = [
-  { label: "Início", href: "#", testId: "nav-link-home" },
-  { label: "Sobre", href: "#sobre", testId: "nav-link-about" },
-  { label: "Como funciona", href: "#como-funciona", testId: "nav-link-how" },
+  { label: "Como Funciona", href: "#como-funciona", testId: "nav-link-how" },
+  { label: "Sobre Ética na Telemedicina", href: "#sobre-etica", testId: "nav-link-about" },
+  { label: "Contato", href: "#contato", testId: "nav-link-contact" },
 ];
 
-const Header = () => {
+const Header = ({ onNavigate, onStartQuiz }: HeaderProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const section = href.replace("#", "");
+    if (onNavigate) {
+      onNavigate(section);
+    } else {
+      document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+    }
+    setMobileOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md shadow-xs">
       <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
         <a href="#" className="flex items-center gap-2" data-test="nav-logo">
           <span className="text-2xl font-bold tracking-tight text-primary">Ethos</span>
         </a>
 
-        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.testId}
               href={link.href}
               data-test={link.testId}
+              onClick={(e) => handleNav(e, link.href)}
               className="text-body-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               {link.label}
             </a>
           ))}
+          <Button
+            variant="cta"
+            size="sm"
+            data-test="nav-button-start"
+            onClick={onStartQuiz}
+          >
+            Começar Teste
+          </Button>
         </nav>
 
-        {/* Mobile toggle */}
         <button
           className="md:hidden text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -42,7 +65,6 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile nav */}
       {mobileOpen && (
         <nav className="md:hidden border-t border-border bg-card px-6 pb-4 pt-2 flex flex-col gap-3">
           {navLinks.map((link) => (
@@ -50,12 +72,24 @@ const Header = () => {
               key={link.testId}
               href={link.href}
               data-test={`${link.testId}-mobile`}
+              onClick={(e) => handleNav(e, link.href)}
               className="text-body-sm font-medium text-muted-foreground hover:text-primary py-1"
-              onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </a>
           ))}
+          <Button
+            variant="cta"
+            size="sm"
+            data-test="nav-button-start-mobile"
+            onClick={() => {
+              onStartQuiz?.();
+              setMobileOpen(false);
+            }}
+            className="mt-2"
+          >
+            Começar Teste
+          </Button>
         </nav>
       )}
     </header>
