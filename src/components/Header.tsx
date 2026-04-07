@@ -11,11 +11,11 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md shadow-xs">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2" data-test="nav-logo">
-          <span className="font-display text-2xl text-primary">Ethos</span>
+          <span className="text-2xl font-bold tracking-tight text-primary">Ethos</span>
         </a>
 
         {/* Desktop nav */}
@@ -25,7 +25,7 @@ const Header = () => {
               key={link.testId}
               href={link.href}
               data-test={link.testId}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-body-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               {link.label}
             </a>
@@ -50,7 +50,7 @@ const Header = () => {
               key={link.testId}
               href={link.href}
               data-test={`${link.testId}-mobile`}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground py-1"
+              className="text-body-sm font-medium text-muted-foreground hover:text-primary py-1"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
