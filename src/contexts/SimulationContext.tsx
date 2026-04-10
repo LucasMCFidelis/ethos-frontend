@@ -23,8 +23,14 @@ interface SimulationContextValue {
     Error,
     { questionId: string; answerValue: string }
   >;
+  getQuestionMutation: UseMutationResult<
+    SimulationStep,
+    Error,
+    { questionId: string }
+  >;
   start: (trackId?: string) => void;
   answer: (questionId: string, answerValue: string) => void;
+  getQuestion: (questionId: string) => void;
   handleStartQuiz: () => void;
   handleComplete: (r: ResultStep["result"]) => void;
   handleRestart: () => void;
@@ -82,8 +88,26 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const getQuestionMutation = useMutation({
+    mutationFn: ({ questionId }: { questionId: string }) => {
+      const sessionId = getSessionId();
+      if (!sessionId)
+        throw new Error("Sessão não encontrada. Reinicie a simulação.");
+      return api.get<SimulationStep>(
+        `/simulation/sessions/${sessionId}/answer/${questionId}`,
+      );
+    },
+    onSuccess: (step) => {
+      setCurrentStep(step);
+    },
+  });
+
   function start(trackId = "confiabilidade") {
     return startMutation.mutate(trackId);
+  }
+
+  function getQuestion(questionId: string) {
+    return getQuestionMutation.mutate({ questionId });
   }
 
   function answer(questionId: string, answerValue: string) {
@@ -127,6 +151,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         handleStartQuiz,
         handleComplete,
         handleRestart,
+        getQuestionMutation,
+        getQuestion,
       }}
     >
       {children}

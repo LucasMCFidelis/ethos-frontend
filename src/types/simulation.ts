@@ -6,6 +6,7 @@ export interface QuestionStep {
     description?: string
     options: string[]
   }
+  savedResponse?: string
 }
 
 export interface ResultStep {

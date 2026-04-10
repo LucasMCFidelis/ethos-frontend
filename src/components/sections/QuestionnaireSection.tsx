@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -11,12 +11,25 @@ interface Props {
 }
 
 export function QuestionnaireSection({ onComplete }: Props) {
-  const { currentStep, answer, startMutation, answerMutation } =
-    useSimulation();
+  const {
+    currentStep,
+    answer,
+    getQuestion,
+    startMutation,
+    answerMutation,
+    getQuestionMutation,
+  } = useSimulation();
   const [selected, setSelected] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
+  const [history, setHistory] = useState<
+    Array<{ id: string; response: string | null }>
+  >([{ id: "q1", response: null }]);
+  const [historyIndex, setHistoryIndex] = useState(0);
 
-  const loading = startMutation.isPending || answerMutation.isPending;
+  const loading =
+    startMutation.isPending ||
+    answerMutation.isPending ||
+    getQuestionMutation.isPending;
 
   useEffect(() => {
     if (currentStep?.finished) onComplete(currentStep.result);
@@ -24,29 +37,67 @@ export function QuestionnaireSection({ onComplete }: Props) {
   }, [currentStep]);
 
   useEffect(() => {
-    if (currentStep && !currentStep.finished) setSelected(null);
+    if (currentStep && !currentStep.finished) {
+      const step = currentStep as QuestionStep;
+      const id = step.question.id;
+
+      setHistory((prev) => {
+        if (historyIndex >= prev.length - 1 && prev.at(-1)?.id !== id) {
+          return [...prev, { id, response: null }];
+        }
+        return prev;
+      });
+
+      const localResponse =
+        history[historyIndex]?.id === id
+          ? history[historyIndex]?.response
+          : null;
+
+      setSelected(localResponse ?? step.savedResponse ?? null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   if (!currentStep || currentStep.finished === true) return null;
 
   const { question } = currentStep as QuestionStep;
 
-  const handleNext = async () => {
+  const handlePrev = () => {
+    if (historyIndex === 0) return;
+
+    const prevIndex = historyIndex - 1;
+
+    setHistory((prev) => {
+      const updated = [...prev];
+      updated[historyIndex] = { ...updated[historyIndex], response: selected };
+      return updated;
+    });
+
+    setHistoryIndex(prevIndex);
+    getQuestion(history[prevIndex].id);
+  };
+
+  const handleNext = () => {
     if (!selected) {
       setShowError(true);
       return;
     }
+
+    setHistory((prev) => {
+      const updated = [...prev];
+      updated[historyIndex] = { ...updated[historyIndex], response: selected };
+      return updated;
+    });
+
+    setHistoryIndex((i) => i + 1);
     answer(question.id, selected);
   };
-
-  const error = startMutation.isError || answerMutation.isError;
 
   const colsMap: Record<number, string> = {
     1: "grid-cols-1",
     2: "sm:grid-cols-2",
     3: "md:grid-cols-3",
   };
-
   const gridCols = colsMap[question.options.length] ?? "grid-cols-2";
 
   const OPTION_LABELS: Record<string, string> = {
@@ -54,6 +105,11 @@ export function QuestionnaireSection({ onComplete }: Props) {
     nao: "Não",
     duvida: "Há Dúvida",
   };
+
+  const error =
+    startMutation.isError ||
+    answerMutation.isError ||
+    getQuestionMutation.isError;
 
   return (
     <section
@@ -85,7 +141,9 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 <Button
                   key={opt}
                   variant="outline"
-                  className={`py-8 text-lg font-medium capitalize hover:bg-transparent ${selected === opt && "border-2 border-primary-700"}`}
+                  className={`py-8 text-lg font-medium capitalize hover:bg-transparent ${
+                    selected === opt ? "border-2 border-primary-700" : ""
+                  }`}
                   onClick={() => {
                     setSelected(opt);
                     setShowError(false);
@@ -110,18 +168,33 @@ export function QuestionnaireSection({ onComplete }: Props) {
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>
+                  Erro ao processar resposta. Tente novamente.
+                </AlertDescription>
               </Alert>
             )}
 
-            <Button
-              variant={selected ? "default" : "ghost"}
-              className="w-full py-6 text-base"
-              onClick={handleNext}
-              disabled={!selected || loading}
-            >
-              {loading ? "Carregando..." : "Próxima Questão"}
-            </Button>
+            <div className="flex gap-4">
+              {historyIndex > 0 && (
+                <Button
+                  variant="outline"
+                  className="w-fit py-6 text-base font-medium"
+                  onClick={handlePrev}
+                  disabled={loading}
+                >
+                  <ChevronLeft />
+                  Anterior
+                </Button>
+              )}
+              <Button
+                variant={selected ? "default" : "ghost"}
+                className="w-full py-6 text-base"
+                onClick={handleNext}
+                disabled={!selected || loading}
+              >
+                {loading ? "Carregando..." : "Próxima Questão"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
