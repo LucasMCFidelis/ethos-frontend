@@ -207,7 +207,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 onClick={handleNext}
                 disabled={!selected || loading}
               >
-                {loading ? "Carregando..." : "Próxima Questão"}
+                {loading ? "Carregando..." : currentQuestion === sessionMaxQuestions ? "Ver Análise" : "Próxima Questão"}
               </Button>
             </div>
           </CardContent>
