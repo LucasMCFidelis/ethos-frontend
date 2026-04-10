@@ -60,7 +60,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           size="sm"
           data-test="nav-button-start"
           onClick={() => handleStartQuiz()}
-          className="w-40"
+          className="w-40 hidden md:flex "
         >
           {startMutation.isPending ? <>...</> : <>Começar Teste</>}
         </Button>
