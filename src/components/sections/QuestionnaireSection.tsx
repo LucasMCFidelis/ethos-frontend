@@ -74,7 +74,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
             <div>
               <h2 className="mb-3">{question.text}</h2>
               {question.description && (
-                <p className="text-foreground text-base leading-relaxed">
+                <p className="text-base leading-relaxed">
                   {question.description}
                 </p>
               )}
@@ -115,10 +115,10 @@ export function QuestionnaireSection({ onComplete }: Props) {
             )}
 
             <Button
+              variant={selected ? "default" : "ghost"}
               className="w-full py-6 text-base"
               onClick={handleNext}
               disabled={!selected || loading}
-              variant="ghost"
             >
               {loading ? "Carregando..." : "Próxima Questão"}
             </Button>

@@ -204,7 +204,7 @@
     letter-spacing: var(--body-tracking);
   }
 
-  h1 {
+  h1, .h1-format {
     font-size: var(--h1-size);
     font-weight: var(--h1-weight);
     line-height: var(--h1-leading);
@@ -234,6 +234,10 @@
     font-size: var(--code-size);
     line-height: var(--code-leading);
     letter-spacing: var(--code-tracking);
+  }
+
+  p {
+    color: var(--neutral-900);
   }
 }
 

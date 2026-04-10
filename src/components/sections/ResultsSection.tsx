@@ -163,7 +163,7 @@ export function ResultsSection({ result, onRestart }: Props) {
         <Separator className="my-8 sm:my-12" />
 
         {/* Disclaimer */}
-        <Card className="bg-card">
+        <Card className="bg-neutral-50">
           <CardContent className="p-4 sm:p-6">
             <p className="text-foreground text-center text-base leading-relaxed">
               <strong>Importante:</strong> Este resultado é baseado em suas

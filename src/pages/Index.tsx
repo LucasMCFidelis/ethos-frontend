@@ -1,9 +1,9 @@
-import { HelpCircle, Users, TrendingUp, AlertTriangle } from "lucide-react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { QuizSection } from "@/components/QuizSection";
+import { QuizSection } from "@/components/sections/QuizSection";
+import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
 
 const Index = () => {
   return (
@@ -15,79 +15,20 @@ const Index = () => {
 
         <QuizSection />
 
-        {/* Como o Ethos Funciona */}
-        <section id="como-funciona" className="py-20 bg-muted">
-          <div className="container">
-            <h2 className="text-center text-foreground mb-12">
-              Como o Ethos Funciona
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div
-                className="rounded-lg border border-border bg-card p-8 shadow-sm"
-                data-test="card-step-1"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100">
-                  <HelpCircle size={24} className="text-primary" />
-                </div>
-                <h3 className="text-foreground mb-3">
-                  1. Responda às Perguntas
-                </h3>
-                <p className="text-body-sm text-muted-foreground">
-                  O questionário apresenta situações contextuais relacionadas à
-                  prática de telemedicina. Todas as perguntas utilizam linguagem
-                  neutra e objetiva para evitar viés.
-                </p>
-              </div>
-
-              <div
-                className="rounded-lg border border-border bg-card p-8 shadow-sm"
-                data-test="card-step-2"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100">
-                  <Users size={24} className="text-primary" />
-                </div>
-                <h3 className="text-foreground mb-3">
-                  2. Identifique Dilemas Éticos
-                </h3>
-                <p className="text-body-sm text-muted-foreground">
-                  Suas respostas nos ajudam a identificar áreas onde dilemas
-                  éticos podem surgir em sua prática profissional, considerando
-                  aspectos de privacidade, segurança e responsabilidade.
-                </p>
-              </div>
-
-              <div
-                className="rounded-lg border border-border bg-card p-8 shadow-sm"
-                data-test="card-step-3"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100">
-                  <TrendingUp size={24} className="text-primary" />
-                </div>
-                <h3 className="text-foreground mb-3">
-                  3. Avaliação de Impacto
-                </h3>
-                <p className="text-body-sm text-muted-foreground">
-                  Ao final, você receberá uma classificação do nível de impacto
-                  social identificado: Grave, Moderado ou Baixo, com orientações
-                  sobre aspectos éticos relevantes.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HowItWorksSection />
 
         {/* Sobre Ética na Telemedicina */}
         <section id="sobre-etica" className="py-20 bg-background">
-          <div className="container max-w-3xl">
+          <div className="container max-w-4xl">
             <h2 className="text-center text-foreground mb-10">
               Sobre Ética na Telemedicina
             </h2>
-            <div className="space-y-6 text-body-md text-muted-foreground">
+            <div className="space-y-6 text-body-md">
               <p>
                 A telemedicina transformou o acesso aos cuidados de saúde, mas
                 também trouxe novos desafios éticos que profissionais de
                 tecnologia precisam considerar ao desenvolver soluções nesta
-                área.
+                área. área.
               </p>
               <p>
                 Questões relacionadas ao sigilo médico, segurança de dados,
@@ -98,27 +39,19 @@ const Index = () => {
             </div>
 
             <div
-              className="mt-10 rounded-lg border-l-4 border-warning-500 bg-warning-100 px-6 py-5"
+              className="mt-10 rounded-lg bg-warning-500/15 px-6 py-5 space-y-3"
               data-test="disclaimer-block"
             >
-              <div className="flex items-start gap-3">
-                <AlertTriangle
-                  size={20}
-                  className="mt-0.5 shrink-0 text-warning-900"
-                />
-                <div>
-                  <h4 className="text-foreground mb-1">
-                    Isenção de Responsabilidade
-                  </h4>
-                  <p className="text-body-sm text-muted-foreground">
-                    Este simulador é uma ferramenta educacional e não substitui
-                    orientação profissional especializada em ética médica ou
-                    jurídica. Os resultados apresentados são baseados em suas
-                    respostas e servem como ponto de reflexão inicial sobre
-                    dilemas éticos.
-                  </p>
-                </div>
-              </div>
+              <h3 className="text-foreground mb-1">
+                Isenção de Responsabilidade
+              </h3>
+              <p className="text-body-sm">
+                Este simulador é uma ferramenta educacional e não substitui
+                orientação profissional especializada em ética médica ou
+                jurídica. Os resultados apresentados são baseados em suas
+                respostas e servem como ponto de reflexão inicial sobre dilemas
+                éticos.
+              </p>
             </div>
           </div>
         </section>
@@ -127,9 +60,8 @@ const Index = () => {
         <section id="contato" className="py-20 bg-muted">
           <div className="container max-w-2xl text-center">
             <h2 className="text-foreground mb-4">Entre em Contato</h2>
-            <p className="text-body-md text-muted-foreground mb-8">
-              Possui dúvidas ou sugestões sobre o Ethos? Nossa equipe está
-              disponível para auxiliar.
+            <p className="text-body-md mb-8">
+              Tem dúvidas ou sugestões sobre o Ethos? Gostaríamos de ouvir você.
             </p>
             <Button
               variant="cta"

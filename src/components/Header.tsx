@@ -36,7 +36,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md shadow-xs">
       <div className="container flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2" data-test="nav-logo">
-          <span className="text-2xl font-bold tracking-tight text-primary">
+          <span className="text-2xl font-bold tracking-tight">
             Ethos
           </span>
         </a>
@@ -48,21 +48,22 @@ const Header = ({ onNavigate }: HeaderProps) => {
               href={link.href}
               data-test={link.testId}
               onClick={(e) => handleNav(e, link.href)}
-              className="text-body-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className="text-body-sm font-bold transition-colors hover:text-primary"
             >
               {link.label}
             </a>
           ))}
-          <Button
-            variant="cta"
-            size="sm"
-            data-test="nav-button-start"
-            onClick={() => handleStartQuiz()}
-            className="w-40"
-          >
-            {startMutation.isPending ? <>...</> : <>Começar Teste</>}
-          </Button>
         </nav>
+        
+        <Button
+          variant="cta"
+          size="sm"
+          data-test="nav-button-start"
+          onClick={() => handleStartQuiz()}
+          className="w-40"
+        >
+          {startMutation.isPending ? <>...</> : <>Começar Teste</>}
+        </Button>
 
         <button
           className="md:hidden text-foreground"
