@@ -8,6 +8,7 @@ import type {
 } from "@/types/simulation";
 
 const SESSION_KEY = "ethos:sessionId";
+const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
 
 interface SimulationContextValue {
   currentStep: SimulationStep | null;
@@ -31,6 +32,7 @@ interface SimulationContextValue {
   start: (trackId?: string) => void;
   answer: (questionId: string, answerValue: string) => void;
   getQuestion: (questionId: string) => void;
+  getSessionMaxQuestions: () => number;
   handleStartQuiz: () => void;
   handleComplete: (r: ResultStep["result"]) => void;
   handleRestart: () => void;
@@ -50,6 +52,15 @@ function saveSessionId(id: string) {
 function clearSessionId() {
   localStorage.removeItem(SESSION_KEY);
 }
+function getSessionMaxQuestions() {
+  return Number(localStorage.getItem(SESSION_MAX_QUESTIONS_KEY));
+}
+function saveSessionMaxQuestions(value: number) {
+  localStorage.setItem(SESSION_MAX_QUESTIONS_KEY, `${value}`);
+}
+function clearSessionMaxQuestions() {
+  localStorage.removeItem(SESSION_MAX_QUESTIONS_KEY);
+}
 
 export function SimulationProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState<SimulationStep | null>(null);
@@ -63,6 +74,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
       ),
     onSuccess: (data) => {
       saveSessionId(data.sessionId);
+      saveSessionMaxQuestions(data.maxQuestions);
       setCurrentStep({ finished: false, question: data.question });
     },
   });
@@ -116,6 +128,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
   function reset() {
     clearSessionId();
+    clearSessionMaxQuestions();
     setCurrentStep(null);
     startMutation.reset();
     answerMutation.reset();
@@ -153,6 +166,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         handleRestart,
         getQuestionMutation,
         getQuestion,
+        getSessionMaxQuestions
       }}
     >
       {children}

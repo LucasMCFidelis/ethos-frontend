@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { QuestionStep, ResultStep } from "@/types/simulation";
 import { useSimulation } from "@/hooks/useSimulation";
+import { Progress } from "../ui/progress";
 
 interface Props {
   onComplete: (result: ResultStep["result"]) => void;
@@ -18,6 +19,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
     startMutation,
     answerMutation,
     getQuestionMutation,
+    getSessionMaxQuestions,
   } = useSimulation();
   const [selected, setSelected] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
@@ -93,6 +95,10 @@ export function QuestionnaireSection({ onComplete }: Props) {
     answer(question.id, selected);
   };
 
+  const sessionMaxQuestions = getSessionMaxQuestions();
+  const currentQuestion = historyIndex + 1;
+  const porcentagem = Math.round((currentQuestion / sessionMaxQuestions) * 100);
+
   const colsMap: Record<number, string> = {
     1: "grid-cols-1",
     2: "sm:grid-cols-2",
@@ -114,8 +120,17 @@ export function QuestionnaireSection({ onComplete }: Props) {
   return (
     <section
       id="questionnaire"
-      className="py-12 sm:py-16 lg:py-20 bg-background"
+      className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background"
     >
+      <div className="w-full px-4 sm:px-6 max-w-3xl space-y-3">
+        <div className="flex justify-between">
+          <span>
+            Questão {currentQuestion} de {sessionMaxQuestions}
+          </span>
+          <span className="ml-auto">{porcentagem}%</span>
+        </div>
+        <Progress value={porcentagem} id="progress-upload" />
+      </div>
       <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
         <Card
           style={{ borderRadius: "calc(var(--radius) + 8px)" }}
