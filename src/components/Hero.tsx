@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useSimulation } from "@/hooks/useSimulation";
 
-interface HeroProps {
-  onStartQuiz?: () => void;
-}
+const Hero = () => {
+  const { startMutation, handleStartQuiz } = useSimulation();
 
-const Hero = ({ onStartQuiz }: HeroProps) => {
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
@@ -28,7 +27,7 @@ const Hero = ({ onStartQuiz }: HeroProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="max-w-3xl text-foreground sm:text-5xl md:text-6xl"
+          className="max-w-4xl text-foreground sm:text-5xl md:text-6xl"
         >
           Simulador de Decisões Éticas em Telemedicina
         </motion.h1>
@@ -39,8 +38,7 @@ const Hero = ({ onStartQuiz }: HeroProps) => {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-6 max-w-xl text-body-lg text-muted-foreground"
         >
-          Identifique dilemas éticos na sua prática profissional e compreenda o
-          impacto social das suas decisões em ambientes de telemedicina.
+          Identifique dilemas éticos na sua prática profissional e compreenda o impacto social das suas decisões em ambientes de telemedicina.
         </motion.p>
 
         <motion.div
@@ -53,11 +51,17 @@ const Hero = ({ onStartQuiz }: HeroProps) => {
             variant="cta"
             size="lg"
             data-test="hero-button-cta"
-            className="text-base px-8 py-6 gap-2 shadow-md"
-            onClick={onStartQuiz}
+            className="text-base px-8 py-6 w-60 gap-2 shadow-md"
+            onClick={() => handleStartQuiz()}
           >
-            Iniciar Simulação
-            <ArrowRight size={18} />
+            {startMutation.isPending ? (
+              <>...</>
+            ) : (
+              <>
+                Iniciar Simulação
+                <ArrowRight size={18} />
+              </>
+            )}
           </Button>
         </motion.div>
       </div>

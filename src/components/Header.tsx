@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSimulation } from "@/hooks/useSimulation";
 
 interface HeaderProps {
   onNavigate?: (section: string) => void;
-  onStartQuiz?: () => void;
 }
 
 const navLinks = [
   { label: "Como Funciona", href: "#como-funciona", testId: "nav-link-how" },
-  { label: "Sobre Ética na Telemedicina", href: "#sobre-etica", testId: "nav-link-about" },
+  {
+    label: "Sobre Ética na Telemedicina",
+    href: "#sobre-etica",
+    testId: "nav-link-about",
+  },
   { label: "Contato", href: "#contato", testId: "nav-link-contact" },
 ];
 
-const Header = ({ onNavigate, onStartQuiz }: HeaderProps) => {
+const Header = ({ onNavigate }: HeaderProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { startMutation, handleStartQuiz } = useSimulation();
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -31,7 +36,9 @@ const Header = ({ onNavigate, onStartQuiz }: HeaderProps) => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md shadow-xs">
       <div className="container flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2" data-test="nav-logo">
-          <span className="text-2xl font-bold tracking-tight text-primary">Ethos</span>
+          <span className="text-2xl font-bold tracking-tight text-primary">
+            Ethos
+          </span>
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -50,9 +57,10 @@ const Header = ({ onNavigate, onStartQuiz }: HeaderProps) => {
             variant="cta"
             size="sm"
             data-test="nav-button-start"
-            onClick={onStartQuiz}
+            onClick={() => handleStartQuiz()}
+            className="w-40"
           >
-            Começar Teste
+            {startMutation.isPending ? <>...</> : <>Começar Teste</>}
           </Button>
         </nav>
 
@@ -83,10 +91,10 @@ const Header = ({ onNavigate, onStartQuiz }: HeaderProps) => {
             size="sm"
             data-test="nav-button-start-mobile"
             onClick={() => {
-              onStartQuiz?.();
+              handleStartQuiz();
               setMobileOpen(false);
             }}
-            className="mt-2"
+            className="mt-2 w-40"
           >
             Começar Teste
           </Button>
