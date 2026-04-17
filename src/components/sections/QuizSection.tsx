@@ -50,7 +50,17 @@ export function QuizSection() {
         <QuestionnaireSection onComplete={handleComplete} />
       )}
 
-      {result && <ResultsSection result={result} onRestart={handleRestart} />}
+      {result && (
+        <ResultsSection
+          result={result}
+          onRestart={() => {
+            handleRestart();
+            requestAnimationFrame(() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+          }}
+        />
+      )}
     </>
   );
 }
