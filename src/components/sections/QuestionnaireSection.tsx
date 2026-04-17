@@ -96,8 +96,11 @@ export function QuestionnaireSection({ onComplete }: Props) {
   };
 
   const sessionMaxQuestions = getSessionMaxQuestions();
-  const currentQuestion = historyIndex + 1;
-  const porcentagem = Math.round((currentQuestion / sessionMaxQuestions) * 100);
+  const currentQuestion = Math.min(historyIndex + 1, sessionMaxQuestions);
+  const porcentagem = Math.min(
+    100,
+    Math.round((currentQuestion / sessionMaxQuestions) * 100)
+  );
 
   const colsMap: Record<number, string> = {
     1: "grid-cols-1",
