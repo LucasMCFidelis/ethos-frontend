@@ -1,24 +1,40 @@
 import { useSimulation } from "@/hooks/useSimulation";
 import { QuestionnaireSection } from "./QuestionnaireSection";
 import { ResultsSection } from "./ResultsSection";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function QuizSection() {
-  const { handleComplete, result, showQuestionnaire, handleRestart } =
+  const { handleComplete, result, showQuestionnaire, handleRestart, currentStep } =
     useSimulation();
+  const hasScrolledRef = useRef(false);
 
   useEffect(() => {
-    if (showQuestionnaire && !result) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          document
-            .getElementById("questionnaire")
-            ?.scrollIntoView({ behavior: "smooth" });
-        });
-      });
+    if (!showQuestionnaire || result) {
+      hasScrolledRef.current = false;
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showQuestionnaire]);
+    if (hasScrolledRef.current) return;
+    if (!currentStep || currentStep.finished) return;
+
+    let cancelled = false;
+    const tryScroll = (attempt = 0) => {
+      if (cancelled || hasScrolledRef.current) return;
+      const el = document.getElementById("questionnaire");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        hasScrolledRef.current = true;
+        return;
+      }
+      if (attempt < 20) {
+        requestAnimationFrame(() => tryScroll(attempt + 1));
+      }
+    };
+    tryScroll();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showQuestionnaire, currentStep, result]);
 
   useEffect(() => {
     if (result) {
