@@ -123,7 +123,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
   return (
     <section
       id="questionnaire"
-      className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background"
+      className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background scroll-mt-20 md:scroll-mt-24"
     >
       <div className="w-full px-4 sm:px-6 max-w-3xl space-y-3">
         <div className="flex justify-between">
