@@ -114,7 +114,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  function start(trackId = "confiabilidade") {
+  function start(trackId = "confidencialidade") {
     return startMutation.mutate(trackId);
   }
 
