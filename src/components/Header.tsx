@@ -68,11 +68,12 @@ const Header = ({ onNavigate }: HeaderProps) => {
             closeMobileMenu();
             handleStartQuiz();
           }}
+          disabled={startMutation.isPending}
           className="w-40 hidden md:flex"
         >
           {startMutation.isPending ? (
             <>
-              Iniciando Simulação
+              Começando Teste
               <Spinner />
             </>
           ) : (
@@ -116,7 +117,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
             >
               {startMutation.isPending ? (
                 <>
-                  Iniciando Simulação
+                  Começando Teste
                   <Spinner />
                 </>
               ) : (

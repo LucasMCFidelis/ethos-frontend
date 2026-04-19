@@ -38,6 +38,7 @@ const Hero = () => {
             data-test="hero-button-cta"
             className="text-base px-8 py-6 w-60 gap-2 shadow-md"
             onClick={() => handleStartQuiz()}
+            disabled={startMutation.isPending}
           >
             {startMutation.isPending ? (
               <>
