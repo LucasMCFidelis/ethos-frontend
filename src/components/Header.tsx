@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -6,6 +6,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useSimulation } from "@/hooks/useSimulation";
+import { useMobileMenu } from "@/hooks/useMobileMenu";
 
 interface HeaderProps {
   onNavigate?: (section: string) => void;
@@ -23,10 +24,12 @@ const navLinks = [
 
 const Header = ({ onNavigate }: HeaderProps) => {
   const { startMutation, handleStartQuiz } = useSimulation();
+  const { isOpen: isMobileMenuOpen, setIsOpen: setMobileMenuOpen, close: closeMobileMenu } = useMobileMenu();
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const section = href.replace("#", "");
+    closeMobileMenu();
     if (onNavigate) {
       onNavigate(section);
     } else {
@@ -60,14 +63,17 @@ const Header = ({ onNavigate }: HeaderProps) => {
           variant="cta"
           size="sm"
           data-test="nav-button-start"
-          onClick={() => handleStartQuiz()}
+          onClick={() => {
+            closeMobileMenu();
+            handleStartQuiz();
+          }}
           className="w-40 hidden md:flex"
         >
           {startMutation.isPending ? <>...</> : <>Começar Teste</>}
         </Button>
 
         {/* Mobile */}
-        <Popover>
+        <Popover open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <PopoverTrigger asChild className="md:hidden">
             <button className="text-foreground" aria-label="Menu">
               <Menu size={22} />
@@ -93,7 +99,10 @@ const Header = ({ onNavigate }: HeaderProps) => {
               variant="cta"
               size="lg"
               data-test="nav-button-start-mobile"
-              onClick={() => handleStartQuiz()}
+              onClick={() => {
+                closeMobileMenu();
+                handleStartQuiz();
+              }}
               className="mt-2 text-base"
             >
               Começar Teste

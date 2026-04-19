@@ -6,12 +6,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { SimulationProvider } from "./contexts/SimulationContext.tsx";
+import { MobileMenuProvider } from "./contexts/MobileMenuContext.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SimulationProvider>
+      <MobileMenuProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -23,6 +25,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </MobileMenuProvider>
     </SimulationProvider>
   </QueryClientProvider>
 );
