@@ -81,10 +81,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           variant="cta"
           size="sm"
           data-test="nav-button-start"
-          onClick={() => {
-            closeMobileMenu();
-            handleStartQuiz();
-          }}
+          onClick={handleStartCta}
           disabled={startMutation.isPending}
           className="w-40 hidden md:flex"
         >
@@ -125,10 +122,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
               variant="cta"
               size="lg"
               data-test="nav-button-start-mobile"
-              onClick={() => {
-                closeMobileMenu();
-                handleStartQuiz();
-              }}
+              onClick={handleStartCta}
               disabled={startMutation.isPending}
               className="mt-2 text-base"
             >
