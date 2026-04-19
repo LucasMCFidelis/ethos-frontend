@@ -1,4 +1,5 @@
 import { useSimulation } from "@/hooks/useSimulation";
+import { useMobileMenu } from "@/hooks/useMobileMenu";
 import { QuestionnaireSection } from "./QuestionnaireSection";
 import { ResultsSection } from "./ResultsSection";
 import { useEffect, useRef } from "react";
@@ -6,6 +7,7 @@ import { useEffect, useRef } from "react";
 export function QuizSection() {
   const { handleComplete, result, showQuestionnaire, handleRestart, currentStep } =
     useSimulation();
+  const { close: closeMobileMenu } = useMobileMenu();
   const hasScrolledRef = useRef(false);
 
   useEffect(() => {
@@ -15,6 +17,8 @@ export function QuizSection() {
     }
     if (hasScrolledRef.current) return;
     if (!currentStep || currentStep.finished) return;
+
+    closeMobileMenu();
 
     let cancelled = false;
     const tryScroll = (attempt = 0) => {
