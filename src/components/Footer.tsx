@@ -1,4 +1,5 @@
 import { isLastOdd } from "@/lib/utils";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const footerLinks = [
   { label: "Como Funciona", href: "#como-funciona" },
@@ -8,6 +9,18 @@ const footerLinks = [
 
 const Footer = () => {
   const year = new Date().getFullYear();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const section = href.replace("#", "");
+    if (location.pathname !== "/") {
+      navigate(`/#${section}`);
+      return;
+    }
+    document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <footer className="border-t border-border bg-card">
@@ -20,6 +33,7 @@ const Footer = () => {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNav(e, link.href)}
               className={`text-body-sm text-muted-foreground hover:text-primary transition-colors ${isLastOdd(index, footerLinks.length) ? "col-span-full" : ""}`}
             >
               {link.label}
