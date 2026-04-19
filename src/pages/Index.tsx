@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
@@ -6,6 +8,17 @@ import { QuizSection } from "@/components/sections/QuizSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
 
 const Index = () => {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) return;
+    const id = hash.replace("#", "");
+    // Wait for sections to mount before scrolling
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    });
+  }, [hash]);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
