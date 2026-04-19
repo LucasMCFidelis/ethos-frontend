@@ -3,6 +3,7 @@ import { AlertCircle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 import type { QuestionStep, ResultStep } from "@/types/simulation";
 import { useSimulation } from "@/hooks/useSimulation";
 import { Progress } from "../ui/progress";
@@ -211,11 +212,16 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 onClick={handleNext}
                 disabled={!selected || loading}
               >
-                {loading
-                  ? "Carregando..."
-                  : currentQuestion === sessionMaxQuestions
-                    ? "Ver Análise"
-                    : "Próxima Questão"}
+                {loading ? (
+                  <>
+                    Carregando
+                    <Spinner className="ml-2" />
+                  </>
+                ) : currentQuestion === sessionMaxQuestions ? (
+                  "Ver Análise"
+                ) : (
+                  "Próxima Questão"
+                )}
               </Button>
             </div>
           </CardContent>
