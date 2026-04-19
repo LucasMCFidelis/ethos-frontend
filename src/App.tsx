@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { SimulationProvider } from "./contexts/SimulationContext.tsx";
 import { MobileMenuProvider } from "./contexts/MobileMenuContext.tsx";
+import ServerError from "./pages/ServerError.tsx";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
+            <Route path="/server-error" element={<ServerError />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
