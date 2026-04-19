@@ -1,16 +1,15 @@
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSimulation } from "@/hooks/useSimulation";
-import { ArrowRightIcon, Home, RotateCcw } from "lucide-react";
-import { ReactNode } from "react";
+import { ArrowRightIcon } from "lucide-react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_LINKS = [
   { label: "Página inicial", href: "/" },
-  { label: "Como funciona", href: "#como-funciona" },
-  { label: "Entre em Contato", href: "#contato" },
+  { label: "Como funciona", href: "/#como-funciona" },
+  { label: "Entre em Contato", href: "/#contato" },
 ];
 
 interface ErrorPageProps {
@@ -60,6 +59,15 @@ export function ErrorPage({
   icon: Icon,
   actionsProps,
 }: ErrorPageProps) {
+  const navigate = useNavigate();
+
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    e.preventDefault();
+    navigate(href);
+  };
   return (
     <div className="flex min-h-screen justify-between flex-col">
       <Header />
@@ -97,7 +105,7 @@ export function ErrorPage({
                   variant="outline"
                   className="justify-between font-normal h-auto p-4"
                 >
-                  <a href={link.href}>
+                  <a href={link.href} onClick={(e) => handleLinkClick(e, link.href)}>
                     {link.label}
                     <ArrowRightIcon className="text-primary" />
                   </a>

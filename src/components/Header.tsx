@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { useSimulation } from "@/hooks/useSimulation";
 import { useMobileMenu } from "@/hooks/useMobileMenu";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   onNavigate?: (section: string) => void;
@@ -26,6 +27,8 @@ const navLinks = [
 const Header = ({ onNavigate }: HeaderProps) => {
   const { startMutation, handleStartQuiz } = useSimulation();
   const { isOpen: isMobileMenuOpen, setIsOpen: setMobileMenuOpen, close: closeMobileMenu } = useMobileMenu();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -33,9 +36,23 @@ const Header = ({ onNavigate }: HeaderProps) => {
     closeMobileMenu();
     if (onNavigate) {
       onNavigate(section);
-    } else {
-      document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+      return;
     }
+    if (location.pathname !== "/") {
+      navigate(`/#${section}`);
+      return;
+    }
+    document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleStartCta = () => {
+    closeMobileMenu();
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => handleStartQuiz(), 50);
+      return;
+    }
+    handleStartQuiz();
   };
 
   return (
@@ -64,10 +81,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           variant="cta"
           size="sm"
           data-test="nav-button-start"
-          onClick={() => {
-            closeMobileMenu();
-            handleStartQuiz();
-          }}
+          onClick={handleStartCta}
           disabled={startMutation.isPending}
           className="w-40 hidden md:flex"
         >
@@ -108,10 +122,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
               variant="cta"
               size="lg"
               data-test="nav-button-start-mobile"
-              onClick={() => {
-                closeMobileMenu();
-                handleStartQuiz();
-              }}
+              onClick={handleStartCta}
               disabled={startMutation.isPending}
               className="mt-2 text-base"
             >
