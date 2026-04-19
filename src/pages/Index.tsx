@@ -19,7 +19,7 @@ const Index = () => {
 
         {/* Sobre Ética na Telemedicina */}
         <section id="sobre-etica" className="py-20 bg-background">
-          <div className="container max-w-4xl">
+          <div className="container lg:max-w-4xl">
             <h2 className="text-center text-foreground mb-10">
               Sobre Ética na Telemedicina
             </h2>

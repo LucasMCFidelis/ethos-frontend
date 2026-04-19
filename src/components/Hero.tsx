@@ -7,8 +7,8 @@ const Hero = () => {
   const { startMutation, handleStartQuiz } = useSimulation();
 
   return (
-    <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
-      <div className="container relative z-10 flex flex-col items-center text-center px-4 py-24 md:py-32">
+    <section className="relative flex mx-auto lg:min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
+      <div className="container max-w-lg sm:max-w-2xl md:max-w-3xl relative z-10 flex flex-col items-center text-center px-4 py-24 md:py-32">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -44,7 +44,6 @@ const Hero = () => {
             ) : (
               <>
                 Iniciar Simulação
-                <ArrowRight size={18} />
               </>
             )}
           </Button>

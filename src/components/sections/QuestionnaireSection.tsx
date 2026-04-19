@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { QuestionStep, ResultStep } from "@/types/simulation";
 import { useSimulation } from "@/hooks/useSimulation";
 import { Progress } from "../ui/progress";
+import { isLastOdd } from "@/lib/utils";
 
 interface Props {
   onComplete: (result: ResultStep["result"]) => void;
@@ -99,13 +100,13 @@ export function QuestionnaireSection({ onComplete }: Props) {
   const currentQuestion = Math.min(historyIndex + 1, sessionMaxQuestions);
   const porcentagem = Math.min(
     100,
-    Math.round((currentQuestion / sessionMaxQuestions) * 100)
+    Math.round((currentQuestion / sessionMaxQuestions) * 100),
   );
 
   const colsMap: Record<number, string> = {
     1: "grid-cols-1",
-    2: "sm:grid-cols-2",
-    3: "md:grid-cols-3",
+    2: "grid-cols-2",
+    3: "grid-cols-2 md:grid-cols-3",
   };
   const gridCols = colsMap[question.options.length] ?? "grid-cols-2";
 
@@ -155,13 +156,13 @@ export function QuestionnaireSection({ onComplete }: Props) {
             </div>
 
             <div className={`grid gap-3 ${gridCols}`}>
-              {question.options.map((opt) => (
+              {question.options.map((opt, index) => (
                 <Button
                   key={opt}
                   variant="outline"
                   className={`py-8 text-lg font-medium capitalize hover:bg-transparent ${
                     selected === opt ? "border-2 border-primary-700" : ""
-                  }`}
+                  } ${isLastOdd(index, question.options.length) ? "col-span-full md:col-span-1" : ""}`}
                   onClick={() => {
                     setSelected(opt);
                     setShowError(false);
@@ -192,11 +193,11 @@ export function QuestionnaireSection({ onComplete }: Props) {
               </Alert>
             )}
 
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               {historyIndex > 0 && (
                 <Button
                   variant="outline"
-                  className="w-fit py-6 text-base font-medium"
+                  className="w-full sm:w-fit py-6 text-base font-medium"
                   onClick={handlePrev}
                   disabled={loading}
                 >
@@ -210,7 +211,11 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 onClick={handleNext}
                 disabled={!selected || loading}
               >
-                {loading ? "Carregando..." : currentQuestion === sessionMaxQuestions ? "Ver Análise" : "Próxima Questão"}
+                {loading
+                  ? "Carregando..."
+                  : currentQuestion === sessionMaxQuestions
+                    ? "Ver Análise"
+                    : "Próxima Questão"}
               </Button>
             </div>
           </CardContent>

@@ -204,7 +204,7 @@
     letter-spacing: var(--body-tracking);
   }
 
-  h1, .h1-format {
+  h1 {
     font-size: var(--h1-size);
     font-weight: var(--h1-weight);
     line-height: var(--h1-leading);
@@ -242,6 +242,10 @@
 }
 
 @layer utilities {
+  .container {
+    @apply max-w-lg sm:max-w-2xl md:max-w-3xl lg:max-w-6xl
+  }
+
   .text-body-lg {
     font-size: var(--body-lg-size);
     line-height: var(--body-lg-leading);
