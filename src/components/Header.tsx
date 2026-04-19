@@ -1,5 +1,6 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Popover,
   PopoverContent,
@@ -69,7 +70,14 @@ const Header = ({ onNavigate }: HeaderProps) => {
           }}
           className="w-40 hidden md:flex"
         >
-          {startMutation.isPending ? <>...</> : <>Começar Teste</>}
+          {startMutation.isPending ? (
+            <>
+              Iniciando Simulação
+              <Spinner />
+            </>
+          ) : (
+            <>Começar Teste</>
+          )}
         </Button>
 
         {/* Mobile */}
@@ -103,9 +111,17 @@ const Header = ({ onNavigate }: HeaderProps) => {
                 closeMobileMenu();
                 handleStartQuiz();
               }}
+              disabled={startMutation.isPending}
               className="mt-2 text-base"
             >
-              Começar Teste
+              {startMutation.isPending ? (
+                <>
+                  Iniciando Simulação
+                  <Spinner />
+                </>
+              ) : (
+                <>Começar Teste</>
+              )}
             </Button>
           </PopoverContent>
         </Popover>

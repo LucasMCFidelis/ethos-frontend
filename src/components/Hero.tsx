@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { useSimulation } from "@/hooks/useSimulation";
 
 const Hero = () => {
@@ -40,11 +40,12 @@ const Hero = () => {
             onClick={() => handleStartQuiz()}
           >
             {startMutation.isPending ? (
-              <>...</>
-            ) : (
               <>
-                Iniciar Simulação
+                Iniciando Simulação
+                <Spinner />
               </>
+            ) : (
+              <>Iniciar Simulação</>
             )}
           </Button>
         </motion.div>
