@@ -58,7 +58,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-md shadow-xs">
       <div className="container sm:max-w-3xl md:max-w-full flex h-16 items-center justify-between">
-        <a href="#" className="flex items-center gap-2" data-test="nav-logo">
+        <a href="/" className="flex items-center gap-2" data-test="nav-logo">
           <span className="text-2xl font-bold tracking-tight">Ethos</span>
         </a>
 
