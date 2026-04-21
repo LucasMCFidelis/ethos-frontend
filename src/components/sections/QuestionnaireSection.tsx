@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -14,6 +14,12 @@ import {
   LoadQuestionnaireErrorModal,
   SaveAnswersErrorModal,
 } from "../feedback";
+import {
+  clearDraft,
+  loadDraft,
+  saveDraft,
+} from "@/lib/questionnaireDraft";
+import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   onComplete: (result: ResultStep["result"]) => void;
