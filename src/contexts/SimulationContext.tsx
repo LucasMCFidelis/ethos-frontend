@@ -62,6 +62,7 @@ interface SimulationContextValue {
   ) => void;
 
   getSessionMaxQuestions: () => number;
+  reset: () => void;
   handleStartQuiz: () => void;
   handleComplete: (r: ResultStep["result"]) => void;
   handleRestart: () => void;
@@ -249,6 +250,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
         getSessionMaxQuestions,
 
+        reset,
         handleStartQuiz,
         handleComplete,
         handleRestart,
