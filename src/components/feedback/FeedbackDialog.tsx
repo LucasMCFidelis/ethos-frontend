@@ -71,7 +71,7 @@ export function FeedbackDialog({
         className="max-w-[90vw] md:max-w-md rounded-2xl"
         data-test={testId}
       >
-        <DialogHeader className="flex-row items-start gap-4 space-y-0 pr-6">
+        <DialogHeader className="flex-row items-start gap-4 space-y-0 w-11/12">
           <div
             className={cn(
               "flex size-12 shrink-0 items-center justify-center rounded-full",
@@ -103,8 +103,8 @@ export function FeedbackDialog({
 
           {secondaryAction && (
             <Button
-              variant="secondary"
-              className="w-full py-6 text-base font-semibold"
+              variant="outline"
+              className="w-full py-6 bg-muted text-base font-semibold"
               onClick={secondaryAction.onClick}
               disabled={secondaryAction.disabled || secondaryAction.loading}
               data-test={testId ? `${testId}-secondary` : undefined}
