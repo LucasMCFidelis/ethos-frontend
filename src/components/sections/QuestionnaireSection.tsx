@@ -53,7 +53,6 @@ export function QuestionnaireSection({ onComplete }: Props) {
     if (draftRestoredRef.current) return;
 
     const draft = loadDraft();
-    console.log(draft);
 
     if (!draft) {
       finishDraftRestore();
@@ -277,17 +276,17 @@ export function QuestionnaireSection({ onComplete }: Props) {
       id="questionnaire"
       className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background scroll-mt-20 md:scroll-mt-24"
     >
-      <div className="w-full px-4 sm:px-6 md:max-w-3xl space-y-3">
-        <ResetQuestionnaireModal />
-        <div className="flex justify-between">
-          <span>
-            Questão {currentQuestion} de {sessionMaxQuestions}
-          </span>
-          <span className="ml-auto">{porcentagem}%</span>
+      <div className="container mx-auto px-4 sm:px-6 space-y-6 md:max-w-3xl">
+        <div className="w-full space-y-3">
+          <ResetQuestionnaireModal />
+          <div className="flex justify-between">
+            <span>
+              Questão {currentQuestion} de {sessionMaxQuestions}
+            </span>
+            <span className="ml-auto">{porcentagem}%</span>
+          </div>
+          <Progress value={porcentagem} id="progress-upload" />
         </div>
-        <Progress value={porcentagem} id="progress-upload" />
-      </div>
-      <div className="container mx-auto px-4 sm:px-6 md:max-w-3xl">
         <Card
           style={{ borderRadius: "calc(var(--radius) + 8px)" }}
           className="bg-neutral-100"
