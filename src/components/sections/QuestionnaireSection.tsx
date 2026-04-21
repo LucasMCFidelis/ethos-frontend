@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -9,6 +9,11 @@ import { useSimulation } from "@/hooks/useSimulation";
 import { Progress } from "../ui/progress";
 import { isLastOdd } from "@/lib/utils";
 import { ResetQuestionnaireModal } from "../ResetQuestionnaireModal";
+import {
+  CorruptedDataModal,
+  LoadQuestionnaireErrorModal,
+  SaveAnswersErrorModal,
+} from "../feedback";
 
 interface Props {
   onComplete: (result: ResultStep["result"]) => void;
