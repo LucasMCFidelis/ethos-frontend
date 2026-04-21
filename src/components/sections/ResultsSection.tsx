@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
 import type { ResultStep } from "@/types/simulation";
+import { FeedbackModal } from "../FeedbackModal";
 
 const levelConfig: Record<
   string,
@@ -154,10 +155,7 @@ export function ResultsSection({ result, onRestart }: Props) {
             <RotateCcw size={20} />
             Fazer Novamente
           </Button>
-          <Button variant="outline" className="flex-1 gap-3 py-6 text-base">
-            <MessageSquare size={20} />
-            Enviar Feedback
-          </Button>
+          <FeedbackModal/>
         </div>
 
         <Separator className="my-8 sm:my-12" />
