@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -14,6 +14,12 @@ import {
   LoadQuestionnaireErrorModal,
   SaveAnswersErrorModal,
 } from "../feedback";
+import {
+  clearDraft,
+  loadDraft,
+  saveDraft,
+} from "@/lib/questionnaireDraft";
+import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   onComplete: (result: ResultStep["result"]) => void;
@@ -37,14 +43,42 @@ export function QuestionnaireSection({ onComplete }: Props) {
     Array<{ id: string; response: string | null }>
   >([{ id: "q1", response: null }]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const { toast } = useToast();
+  const draftRestoredRef = useRef(false);
 
   const loading =
     startMutation.isPending ||
     answerMutation.isPending ||
     getQuestionMutation.isPending;
 
+  // Restore local draft on mount (if any)
   useEffect(() => {
-    if (currentStep?.finished) onComplete(currentStep.result);
+    if (draftRestoredRef.current) return;
+    const draft = loadDraft();
+    if (!draft) return;
+    draftRestoredRef.current = true;
+
+    setHistory(draft.history);
+    setHistoryIndex(draft.historyIndex);
+    setSelected(draft.selected);
+
+    const targetId =
+      draft.currentQuestionId ?? draft.history[draft.historyIndex]?.id;
+    if (targetId) {
+      getQuestion(targetId);
+      toast({
+        title: "Rascunho restaurado",
+        description: "Suas respostas locais foram recuperadas.",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (currentStep?.finished) {
+      clearDraft();
+      onComplete(currentStep.result);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
@@ -112,8 +146,37 @@ export function QuestionnaireSection({ onComplete }: Props) {
 
   const handleClearAndRestart = () => {
     setDismissedCorrupted(false);
+    clearDraft();
     reset();
     start();
+  };
+
+  const handleSaveDraft = () => {
+    const currentId =
+      currentStep && !currentStep.finished
+        ? (currentStep as QuestionStep).question.id
+        : history[historyIndex]?.id;
+
+    const updatedHistory = history.map((h, i) =>
+      i === historyIndex ? { ...h, response: selected } : h,
+    );
+
+    const ok = saveDraft({
+      history: updatedHistory,
+      historyIndex,
+      selected,
+      currentQuestionId: currentId,
+    });
+
+    toast({
+      title: ok ? "Rascunho salvo" : "Não foi possível salvar",
+      description: ok
+        ? "Suas respostas foram armazenadas localmente neste dispositivo."
+        : "O armazenamento local não está disponível.",
+      variant: ok ? "default" : "destructive",
+    });
+
+    if (ok) setDismissedAnswerError(true);
   };
 
   // Always-on modals layer (rendered even when there is no currentStep yet)
@@ -129,6 +192,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
         open={answerErrorOpen}
         onOpenChange={(o) => !o && setDismissedAnswerError(true)}
         onRetry={handleRetryAnswer}
+        onSaveDraft={handleSaveDraft}
         retrying={answerMutation.isPending}
       />
       <CorruptedDataModal
