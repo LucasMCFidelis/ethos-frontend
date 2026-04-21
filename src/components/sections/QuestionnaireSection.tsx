@@ -75,7 +75,10 @@ export function QuestionnaireSection({ onComplete }: Props) {
   }, []);
 
   useEffect(() => {
-    if (currentStep?.finished) onComplete(currentStep.result);
+    if (currentStep?.finished) {
+      clearDraft();
+      onComplete(currentStep.result);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
