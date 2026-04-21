@@ -24,6 +24,8 @@ export function QuestionnaireSection({ onComplete }: Props) {
     currentStep,
     answer,
     getQuestion,
+    start,
+    reset,
     startMutation,
     answerMutation,
     getQuestionMutation,
