@@ -43,11 +43,36 @@ export function QuestionnaireSection({ onComplete }: Props) {
     Array<{ id: string; response: string | null }>
   >([{ id: "q1", response: null }]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const { toast } = useToast();
+  const draftRestoredRef = useRef(false);
 
   const loading =
     startMutation.isPending ||
     answerMutation.isPending ||
     getQuestionMutation.isPending;
+
+  // Restore local draft on mount (if any)
+  useEffect(() => {
+    if (draftRestoredRef.current) return;
+    const draft = loadDraft();
+    if (!draft) return;
+    draftRestoredRef.current = true;
+
+    setHistory(draft.history);
+    setHistoryIndex(draft.historyIndex);
+    setSelected(draft.selected);
+
+    const targetId =
+      draft.currentQuestionId ?? draft.history[draft.historyIndex]?.id;
+    if (targetId) {
+      getQuestion(targetId);
+      toast({
+        title: "Rascunho restaurado",
+        description: "Suas respostas locais foram recuperadas.",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (currentStep?.finished) onComplete(currentStep.result);
