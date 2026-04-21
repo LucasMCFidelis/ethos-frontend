@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 import {
   MutateOptions,
   useMutation,
@@ -10,6 +10,7 @@ import type {
   QuestionStep,
   ResultStep,
 } from "@/types/simulation";
+import { hasDraft } from "@/lib/questionnaireDraft";
 
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
@@ -102,7 +103,15 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
   const [result, setResult] = useState<ResultStep["result"] | null>(null);
 
-  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(() => hasDraft());
+
+  // Auto-show questionnaire on mount when a local draft exists.
+  // The actual restoration of state/question is handled inside QuestionnaireSection.
+  useEffect(() => {
+    if (hasDraft()) {
+      setShowQuestionnaire(true);
+    }
+  }, []);
 
   const startMutation = useMutation({
     mutationFn: (trackId: string) =>
