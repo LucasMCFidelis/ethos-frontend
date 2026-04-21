@@ -259,14 +259,6 @@ export function QuestionnaireSection({ onComplete }: Props) {
               </Alert>
             )}
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Erro ao processar resposta. Tente novamente.
-                </AlertDescription>
-              </Alert>
-            )}
 
             <div className="flex flex-col sm:flex-row gap-4">
               {historyIndex > 0 && (
@@ -301,6 +293,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
           </CardContent>
         </Card>
       </div>
+      {modals}
     </section>
   );
 }
