@@ -14,11 +14,7 @@ import {
   LoadQuestionnaireErrorModal,
   SaveAnswersErrorModal,
 } from "../feedback";
-import {
-  clearDraft,
-  loadDraft,
-  saveDraft,
-} from "@/lib/questionnaireDraft";
+import { clearDraft, loadDraft, saveDraft } from "@/lib/questionnaireDraft";
 import { useToast } from "@/hooks/use-toast";
 
 interface Props {
@@ -29,13 +25,14 @@ export function QuestionnaireSection({ onComplete }: Props) {
   const {
     currentStep,
     answer,
-    getQuestion,
+    loadQuestionFromTrack,
     start,
     reset,
     startMutation,
     answerMutation,
-    getQuestionMutation,
+    loadQuestionFromTrackMutation,
     getSessionMaxQuestions,
+    finishDraftRestore,
   } = useSimulation();
   const [selected, setSelected] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
@@ -49,29 +46,42 @@ export function QuestionnaireSection({ onComplete }: Props) {
   const loading =
     startMutation.isPending ||
     answerMutation.isPending ||
-    getQuestionMutation.isPending;
+    loadQuestionFromTrackMutation.isPending;
 
   // Restore local draft on mount (if any)
   useEffect(() => {
     if (draftRestoredRef.current) return;
+
     const draft = loadDraft();
-    if (!draft) return;
+    console.log(draft);
+
+    if (!draft) {
+      finishDraftRestore();
+      return;
+    }
+
     draftRestoredRef.current = true;
 
-    setHistory(draft.history);
-    setHistoryIndex(draft.historyIndex);
-    setSelected(draft.selected);
+    setHistory(draft.history ?? []);
+    setHistoryIndex(draft.historyIndex ?? 0);
+    setSelected(draft.selected ?? null);
 
-    const targetId =
-      draft.currentQuestionId ?? draft.history[draft.historyIndex]?.id;
-    if (targetId) {
-      getQuestion(targetId);
-      toast({
-        title: "Rascunho restaurado",
-        description: "Suas respostas locais foram recuperadas.",
-      });
+    const safeIndex =
+      draft.historyIndex >= 0 &&
+      draft.historyIndex < (draft.history?.length ?? 0)
+        ? draft.historyIndex
+        : 0;
+
+    const targetId = draft.currentQuestionId || draft.history?.[safeIndex]?.id;
+
+    if (!targetId) {
+      finishDraftRestore();
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    loadQuestionFromTrack(targetId).finally(() => {
+      finishDraftRestore();
+    });
   }, []);
 
   useEffect(() => {
@@ -108,10 +118,10 @@ export function QuestionnaireSection({ onComplete }: Props) {
   const corruptedSession = useMemo(() => {
     const errMsg =
       (answerMutation.error as Error | null)?.message ||
-      (getQuestionMutation.error as Error | null)?.message ||
+      (loadQuestionFromTrackMutation.error as Error | null)?.message ||
       "";
     return /sess(ã|a)o n(ã|a)o encontrada/i.test(errMsg);
-  }, [answerMutation.error, getQuestionMutation.error]);
+  }, [answerMutation.error, loadQuestionFromTrackMutation.error]);
 
   const [dismissedLoadError, setDismissedLoadError] = useState(false);
   const [dismissedAnswerError, setDismissedAnswerError] = useState(false);
@@ -120,23 +130,25 @@ export function QuestionnaireSection({ onComplete }: Props) {
   const loadErrorOpen =
     !dismissedLoadError &&
     (startMutation.isError ||
-      (getQuestionMutation.isError && !corruptedSession));
+      (loadQuestionFromTrackMutation.isError && !corruptedSession));
   const answerErrorOpen =
     !dismissedAnswerError && answerMutation.isError && !corruptedSession;
   const corruptedOpen = !dismissedCorrupted && corruptedSession;
 
   const handleRetryLoad = () => {
     setDismissedLoadError(false);
+
     if (startMutation.isError) {
       startMutation.reset();
       start();
-    } else if (getQuestionMutation.isError) {
+    } else if (loadQuestionFromTrackMutation.isError) {
       const id = history[historyIndex]?.id;
-      getQuestionMutation.reset();
-      if (id) getQuestion(id);
+
+      loadQuestionFromTrackMutation.reset();
+
+      if (id) loadQuestionFromTrack(id);
     }
   };
-
   const handleRetryAnswer = () => {
     if (!selected) return;
     answerMutation.reset();
@@ -186,7 +198,9 @@ export function QuestionnaireSection({ onComplete }: Props) {
         open={loadErrorOpen}
         onOpenChange={(o) => !o && setDismissedLoadError(true)}
         onRetry={handleRetryLoad}
-        retrying={startMutation.isPending || getQuestionMutation.isPending}
+        retrying={
+          startMutation.isPending || loadQuestionFromTrackMutation.isPending
+        }
       />
       <SaveAnswersErrorModal
         open={answerErrorOpen}
@@ -219,7 +233,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
     });
 
     setHistoryIndex(prevIndex);
-    getQuestion(history[prevIndex].id);
+    loadQuestionFromTrack(history[prevIndex].id);
   };
 
   const handleNext = () => {
@@ -258,14 +272,13 @@ export function QuestionnaireSection({ onComplete }: Props) {
     duvida: "Há Dúvida",
   };
 
-
   return (
     <section
       id="questionnaire"
       className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background scroll-mt-20 md:scroll-mt-24"
     >
       <div className="w-full px-4 sm:px-6 md:max-w-3xl space-y-3">
-        <ResetQuestionnaireModal/>
+        <ResetQuestionnaireModal />
         <div className="flex justify-between">
           <span>
             Questão {currentQuestion} de {sessionMaxQuestions}
@@ -322,7 +335,6 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 </AlertDescription>
               </Alert>
             )}
-
 
             <div className="flex flex-col sm:flex-row gap-4">
               {historyIndex > 0 && (

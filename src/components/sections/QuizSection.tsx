@@ -5,8 +5,14 @@ import { ResultsSection } from "./ResultsSection";
 import { useEffect, useRef } from "react";
 
 export function QuizSection() {
-  const { handleComplete, result, showQuestionnaire, handleRestart, currentStep } =
-    useSimulation();
+  const {
+    handleComplete,
+    result,
+    showQuestionnaire,
+    handleRestart,
+    currentStep,
+    isRestoringDraft
+  } = useSimulation();
   const { close: closeMobileMenu } = useMobileMenu();
   const hasScrolledRef = useRef(false);
 
@@ -50,7 +56,7 @@ export function QuizSection() {
 
   return (
     <>
-      {showQuestionnaire && !result && (
+      {showQuestionnaire && !result && (currentStep || isRestoringDraft) && (
         <QuestionnaireSection onComplete={handleComplete} />
       )}
 

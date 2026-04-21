@@ -10,7 +10,7 @@ import type {
   QuestionStep,
   ResultStep,
 } from "@/types/simulation";
-import { hasDraft } from "@/lib/questionnaireDraft";
+import { clearDraft, hasDraft } from "@/lib/questionnaireDraft";
 
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
@@ -33,6 +33,8 @@ interface SimulationContextValue {
   currentStep: SimulationStep | null;
   result: ResultStep["result"] | null;
   showQuestionnaire: boolean;
+  isRestoringDraft: boolean;
+  finishDraftRestore: () => void;
 
   startMutation: UseMutationResult<
     { sessionId: string } & QuestionStep,
@@ -46,7 +48,13 @@ interface SimulationContextValue {
     { questionId: string; answerValue: string }
   >;
 
-  getQuestionMutation: UseMutationResult<
+  loadQuestionFromTrackMutation: UseMutationResult<
+    QuestionStep["question"],
+    Error,
+    { questionId: string }
+  >;
+
+  loadAnsweredStepMutation: UseMutationResult<
     SimulationStep,
     Error,
     { questionId: string }
@@ -56,7 +64,10 @@ interface SimulationContextValue {
 
   start: (trackId?: string) => void;
   answer: (questionId: string, answerValue: string) => void;
-  getQuestion: (questionId: string) => void;
+  loadQuestionFromTrack: (
+    questionId: string,
+  ) => Promise<QuestionStep["question"]>;
+  loadAnsweredStep: (questionId: string) => Promise<SimulationStep>;
   sendFeedback: (
     payload: FeedbackPayload,
     options?: MutateOptions<FeedbackResponse, Error, FeedbackPayload>,
@@ -87,7 +98,7 @@ function clearSessionId() {
 }
 
 function getSessionMaxQuestions() {
-  return Number(localStorage.getItem(SESSION_MAX_QUESTIONS_KEY));
+  return Number(localStorage.getItem(SESSION_MAX_QUESTIONS_KEY) ?? 0);
 }
 
 function saveSessionMaxQuestions(value: number) {
@@ -104,12 +115,16 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
   const [result, setResult] = useState<ResultStep["result"] | null>(null);
 
   const [showQuestionnaire, setShowQuestionnaire] = useState(() => hasDraft());
+  const [isRestoringDraft, setIsRestoringDraft] = useState(() => hasDraft());
 
   // Auto-show questionnaire on mount when a local draft exists.
   // The actual restoration of state/question is handled inside QuestionnaireSection.
   useEffect(() => {
-    if (hasDraft()) {
+    const draftExists = hasDraft();
+
+    if (draftExists) {
       setShowQuestionnaire(true);
+      setIsRestoringDraft(true);
     }
   }, []);
 
@@ -158,7 +173,24 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const getQuestionMutation = useMutation({
+  const loadQuestionFromTrackMutation = useMutation({
+    mutationFn: ({ questionId }: { questionId: string }) =>
+      api.get<QuestionStep["question"]>(
+        `/simulation/tracks/confidencialidade/questions/${questionId}`,
+      ),
+
+    onSuccess: (question) => {
+      setCurrentStep({
+        finished: false,
+        question: {
+          ...question,
+          options: Object.keys(question.options),
+        },
+      });
+    },
+  });
+
+  const loadAnsweredStepMutation = useMutation({
     mutationFn: ({ questionId }: { questionId: string }) => {
       const sessionId = getSessionId();
 
@@ -199,10 +231,20 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  function getQuestion(questionId: string) {
-    getQuestionMutation.mutate({
+  async function loadQuestionFromTrack(questionId: string) {
+    return await loadQuestionFromTrackMutation.mutateAsync({
       questionId,
     });
+  }
+
+  async function loadAnsweredStep(questionId: string) {
+    return await loadAnsweredStepMutation.mutateAsync({
+      questionId,
+    });
+  }
+
+  function finishDraftRestore() {
+    setIsRestoringDraft(false);
   }
 
   function sendFeedback(
@@ -215,11 +257,14 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
   function reset() {
     clearSessionId();
     clearSessionMaxQuestions();
+    clearDraft();
 
     setCurrentStep(null);
 
     startMutation.reset();
     answerMutation.reset();
+    loadQuestionFromTrackMutation.reset();
+    loadAnsweredStepMutation.reset();
     feedbackMutation.reset();
   }
 
@@ -246,15 +291,19 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         currentStep,
         result,
         showQuestionnaire,
+        isRestoringDraft,
+        finishDraftRestore,
 
         startMutation,
         answerMutation,
-        getQuestionMutation,
+        loadQuestionFromTrackMutation,
+        loadAnsweredStepMutation,
         feedbackMutation,
 
         start,
         answer,
-        getQuestion,
+        loadQuestionFromTrack,
+        loadAnsweredStep,
         sendFeedback,
 
         getSessionMaxQuestions,
