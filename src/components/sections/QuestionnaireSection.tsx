@@ -70,7 +70,76 @@ export function QuestionnaireSection({ onComplete }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
-  if (!currentStep || currentStep.finished === true) return null;
+  // Detect "corrupted data" condition (session id present locally but server rejects it)
+  const corruptedSession = useMemo(() => {
+    const errMsg =
+      (answerMutation.error as Error | null)?.message ||
+      (getQuestionMutation.error as Error | null)?.message ||
+      "";
+    return /sess(ã|a)o n(ã|a)o encontrada/i.test(errMsg);
+  }, [answerMutation.error, getQuestionMutation.error]);
+
+  const [dismissedLoadError, setDismissedLoadError] = useState(false);
+  const [dismissedAnswerError, setDismissedAnswerError] = useState(false);
+  const [dismissedCorrupted, setDismissedCorrupted] = useState(false);
+
+  const loadErrorOpen =
+    !dismissedLoadError &&
+    (startMutation.isError ||
+      (getQuestionMutation.isError && !corruptedSession));
+  const answerErrorOpen =
+    !dismissedAnswerError && answerMutation.isError && !corruptedSession;
+  const corruptedOpen = !dismissedCorrupted && corruptedSession;
+
+  const handleRetryLoad = () => {
+    setDismissedLoadError(false);
+    if (startMutation.isError) {
+      startMutation.reset();
+      start();
+    } else if (getQuestionMutation.isError) {
+      const id = history[historyIndex]?.id;
+      getQuestionMutation.reset();
+      if (id) getQuestion(id);
+    }
+  };
+
+  const handleRetryAnswer = () => {
+    if (!selected) return;
+    answerMutation.reset();
+    setDismissedAnswerError(false);
+    answer(question?.id ?? "", selected);
+  };
+
+  const handleClearAndRestart = () => {
+    setDismissedCorrupted(false);
+    reset();
+    start();
+  };
+
+  // Always-on modals layer (rendered even when there is no currentStep yet)
+  const modals = (
+    <>
+      <LoadQuestionnaireErrorModal
+        open={loadErrorOpen}
+        onOpenChange={(o) => !o && setDismissedLoadError(true)}
+        onRetry={handleRetryLoad}
+        retrying={startMutation.isPending || getQuestionMutation.isPending}
+      />
+      <SaveAnswersErrorModal
+        open={answerErrorOpen}
+        onOpenChange={(o) => !o && setDismissedAnswerError(true)}
+        onRetry={handleRetryAnswer}
+        retrying={answerMutation.isPending}
+      />
+      <CorruptedDataModal
+        open={corruptedOpen}
+        onOpenChange={(o) => !o && setDismissedCorrupted(true)}
+        onClearAndRestart={handleClearAndRestart}
+      />
+    </>
+  );
+
+  if (!currentStep || currentStep.finished === true) return modals;
 
   const { question } = currentStep as QuestionStep;
 
@@ -125,10 +194,6 @@ export function QuestionnaireSection({ onComplete }: Props) {
     duvida: "Há Dúvida",
   };
 
-  const error =
-    startMutation.isError ||
-    answerMutation.isError ||
-    getQuestionMutation.isError;
 
   return (
     <section
