@@ -143,8 +143,37 @@ export function QuestionnaireSection({ onComplete }: Props) {
 
   const handleClearAndRestart = () => {
     setDismissedCorrupted(false);
+    clearDraft();
     reset();
     start();
+  };
+
+  const handleSaveDraft = () => {
+    const currentId =
+      currentStep && !currentStep.finished
+        ? (currentStep as QuestionStep).question.id
+        : history[historyIndex]?.id;
+
+    const updatedHistory = history.map((h, i) =>
+      i === historyIndex ? { ...h, response: selected } : h,
+    );
+
+    const ok = saveDraft({
+      history: updatedHistory,
+      historyIndex,
+      selected,
+      currentQuestionId: currentId,
+    });
+
+    toast({
+      title: ok ? "Rascunho salvo" : "Não foi possível salvar",
+      description: ok
+        ? "Suas respostas foram armazenadas localmente neste dispositivo."
+        : "O armazenamento local não está disponível.",
+      variant: ok ? "default" : "destructive",
+    });
+
+    if (ok) setDismissedAnswerError(true);
   };
 
   // Always-on modals layer (rendered even when there is no currentStep yet)
@@ -160,6 +189,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
         open={answerErrorOpen}
         onOpenChange={(o) => !o && setDismissedAnswerError(true)}
         onRetry={handleRetryAnswer}
+        onSaveDraft={handleSaveDraft}
         retrying={answerMutation.isPending}
       />
       <CorruptedDataModal
