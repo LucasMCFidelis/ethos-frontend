@@ -36,7 +36,7 @@ export function ResetQuestionnaireModal() {
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[90vw] md:max-w-md rounded-2xl space-y-4"
+        className="max-w-[90vw] sm:max-w-md rounded-2xl space-y-4"
       >
         <DialogHeader className="flex-row items-start gap-4 space-y-0 w-11/12">
           <div
