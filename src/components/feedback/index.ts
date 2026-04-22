@@ -7,3 +7,4 @@ export type {
 export { LoadQuestionnaireErrorModal } from "./LoadQuestionnaireErrorModal";
 export { SaveAnswersErrorModal } from "./SaveAnswersErrorModal";
 export { CorruptedDataModal } from "./CorruptedDataModal";
+export { SimulationFeedbackModals } from "./SimulationFeedbackModals";
