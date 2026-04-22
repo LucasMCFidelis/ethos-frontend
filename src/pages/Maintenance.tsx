@@ -16,12 +16,16 @@ export default function Maintenance() {
   return (
     <ErrorPage
       icon={Wrench}
-      title="Em manutenção"
-      description="Estamos realizando melhorias no Ethos. Em breve estaremos de volta."
+      title="Manutenção em Andamento"
+      description="Estamos realizando uma manutenção programada para melhorar nossos serviços. Voltaremos em breve! Tempo estimado: algumas horas."
       actionsProps={{
         primary: {
-          text: "Tentar novamente",
+          text: "Atualizar Página",
           action: () => window.location.reload(),
+        },
+        secondary: {
+          text: "Saiba Mais",
+          action: () => {},
         },
       }}
     />
