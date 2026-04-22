@@ -10,7 +10,7 @@ import type {
   QuestionStep,
   ResultStep,
 } from "@/types/simulation";
-import { clearDraft, hasDraft } from "@/lib/questionnaireDraft";
+import { clearDraft, hasDraft, saveDraft } from "@/lib/questionnaireDraft";
 import { useNavigate } from "react-router-dom";
 import { IS_MAINTENANCE } from "@/hooks/useMaintenance";
 
@@ -31,12 +31,25 @@ interface FeedbackResponse {
   createdAt: string;
 }
 
+export interface QuestionnaireHistoryEntry {
+  id: string;
+  response: string | null;
+}
+
 interface SimulationContextValue {
   currentStep: SimulationStep | null;
   result: ResultStep["result"] | null;
   showQuestionnaire: boolean;
   isRestoringDraft: boolean;
   finishDraftRestore: () => void;
+
+  // Shared questionnaire state (used by section + global modals)
+  history: QuestionnaireHistoryEntry[];
+  historyIndex: number;
+  selected: string | null;
+  setHistory: React.Dispatch<React.SetStateAction<QuestionnaireHistoryEntry[]>>;
+  setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
+  setSelected: React.Dispatch<React.SetStateAction<string | null>>;
 
   startMutation: UseMutationResult<
     { sessionId: string } & QuestionStep,
@@ -80,6 +93,12 @@ interface SimulationContextValue {
   handleStartQuiz: () => void;
   handleComplete: (r: ResultStep["result"]) => void;
   handleRestart: () => void;
+
+  // Shared actions for modals
+  saveCurrentDraft: () => boolean;
+  retryLoad: () => void;
+  retryAnswer: () => void;
+  clearAndRestart: () => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -118,6 +137,13 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
   const [showQuestionnaire, setShowQuestionnaire] = useState(() => hasDraft());
   const [isRestoringDraft, setIsRestoringDraft] = useState(() => hasDraft());
+
+  // Shared questionnaire state
+  const [history, setHistory] = useState<QuestionnaireHistoryEntry[]>([
+    { id: "q1", response: null },
+  ]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -264,6 +290,9 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     clearDraft();
 
     setCurrentStep(null);
+    setHistory([{ id: "q1", response: null }]);
+    setHistoryIndex(0);
+    setSelected(null);
 
     startMutation.reset();
     answerMutation.reset();
@@ -293,6 +322,53 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     setShowQuestionnaire(false);
   }
 
+  function saveCurrentDraft() {
+    const currentId =
+      currentStep && !currentStep.finished
+        ? (currentStep as QuestionStep).question.id
+        : history[historyIndex]?.id;
+
+    const updatedHistory = history.map((h, i) =>
+      i === historyIndex ? { ...h, response: selected } : h,
+    );
+
+    return saveDraft({
+      history: updatedHistory,
+      historyIndex,
+      selected,
+      currentQuestionId: currentId,
+    });
+  }
+
+  function retryLoad() {
+    if (startMutation.isError) {
+      startMutation.reset();
+      start();
+    } else if (loadQuestionFromTrackMutation.isError) {
+      const id = history[historyIndex]?.id;
+      loadQuestionFromTrackMutation.reset();
+      if (id) loadQuestionFromTrack(id);
+    }
+  }
+
+  function retryAnswer() {
+    if (!selected) return;
+    const questionId =
+      currentStep && !currentStep.finished
+        ? (currentStep as QuestionStep).question.id
+        : history[historyIndex]?.id;
+    if (!questionId) return;
+    answerMutation.reset();
+    answer(questionId, selected);
+  }
+
+  function clearAndRestart() {
+    clearDraft();
+    reset();
+    setShowQuestionnaire(true);
+    start();
+  }
+
   return (
     <SimulationContext.Provider
       value={{
@@ -301,6 +377,13 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         showQuestionnaire,
         isRestoringDraft,
         finishDraftRestore,
+
+        history,
+        historyIndex,
+        selected,
+        setHistory,
+        setHistoryIndex,
+        setSelected,
 
         startMutation,
         answerMutation,
@@ -320,6 +403,11 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         handleStartQuiz,
         handleComplete,
         handleRestart,
+
+        saveCurrentDraft,
+        retryLoad,
+        retryAnswer,
+        clearAndRestart,
       }}
     >
       {children}
