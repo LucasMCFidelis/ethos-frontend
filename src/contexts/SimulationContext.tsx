@@ -11,6 +11,8 @@ import type {
   ResultStep,
 } from "@/types/simulation";
 import { clearDraft, hasDraft } from "@/lib/questionnaireDraft";
+import { useNavigate } from "react-router-dom";
+import { IS_MAINTENANCE } from "@/hooks/useMaintenance";
 
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
@@ -116,6 +118,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
   const [showQuestionnaire, setShowQuestionnaire] = useState(() => hasDraft());
   const [isRestoringDraft, setIsRestoringDraft] = useState(() => hasDraft());
+
+  const navigate = useNavigate();
 
   // Auto-show questionnaire on mount when a local draft exists.
   // The actual restoration of state/question is handled inside QuestionnaireSection.
@@ -269,6 +273,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
   }
 
   function handleStartQuiz() {
+    if (IS_MAINTENANCE) {
+      navigate("/maintenance");
+      return;
+    }
     reset();
     setResult(null);
     setShowQuestionnaire(true);
