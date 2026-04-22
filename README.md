@@ -100,6 +100,20 @@ npm run lint          # verifica o código com ESLint
 
 ---
 
+## Rotas / Páginas
+
+As rotas são declaradas em `src/App.tsx` utilizando o React Router DOM v6. As páginas correspondentes estão em `src/pages/`.
+
+| Rota | Página | Arquivo | Descrição |
+|---|---|---|---|
+| `/` | Index | `src/pages/Index.tsx` | Página inicial (landing) com as seções de apresentação, simulador ético integrado (questionário) e resultados. |
+| `/server-error` | ServerError | `src/pages/ServerError.tsx` | Página de erro 500 exibida quando ocorre falha interna do servidor, com ações para tentar novamente ou voltar ao início. |
+| `/offline` | Offline | `src/pages/Offline.tsx` | Página exibida quando o usuário perde a conexão com a internet. Possui versão estática complementar em `public/offline.html` para uso via cache do Service Worker. |
+| `/maintenance` | Maintenance | `src/pages/Maintenance.tsx` | Página de manutenção exibida quando o modo de manutenção (`IS_MAINTENANCE`) está ativo; redireciona para `/` quando desativado. |
+| `*` | NotFound | `src/pages/NotFound.tsx` | Página 404 para rotas não correspondidas. |
+
+---
+
 ## CI/CD
 
 O pipeline de integração e entrega contínua é gerenciado via **GitHub Actions** (`.github/workflows/ci.yml`) e executa automaticamente em pushes para `main` e `develop` e em pull requests.
