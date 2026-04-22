@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { X } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { useSimulation } from "@/hooks/useSimulation";
@@ -23,30 +23,53 @@ export function ResetQuestionnaireModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex justify-end mb-6">
-        <Button
-          asChild
-          variant="ghost"
-          size="icon"
-          className="size-6 text-muted-foreground"
-          onClick={() => setOpen(true)}
-        >
-          <X />
-        </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="size-6 text-muted-foreground"
+            onClick={() => setOpen(true)}
+          >
+            <X />
+          </Button>
         </div>
       </DialogTrigger>
-
-      <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
-        <DialogHeader>
-          <DialogTitle className="text-primary">
-            <h2>Você está certo disso?</h2>
-          </DialogTitle>
-          <DialogDescription>
-            Ao confirmar, todo o progresso realizado nessa trilha será perdido!
-          </DialogDescription>
+      <DialogContent
+        showCloseButton={false}
+        className="max-w-[90vw] md:max-w-md rounded-2xl space-y-4"
+      >
+        <DialogHeader className="flex-row items-start gap-4 space-y-0 w-11/12">
+          <div
+            className="flex size-12 shrink-0 items-center justify-center rounded-full text-error-500 bg-error-100"
+            aria-hidden="true"
+          >
+            <AlertCircle />
+          </div>
+          <div className="flex-1 space-y-2 text-left">
+            <DialogTitle className="text-lg font-semibold leading-tight">
+              Deseja realmente sair?
+            </DialogTitle>
+            <DialogDescription className="text-sm sm:w-4/5 leading-relaxed text-muted-foreground">
+              Você perderá todo o progresso do questionário e precisará começar
+              novamente.
+            </DialogDescription>
+          </div>
         </DialogHeader>
-        <DialogFooter>
-          <Button className="flex-1 gap-2" onClick={() => reset()}>
-            Confirmar
+
+        <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:space-x-0">
+          <Button
+            variant="outline"
+            className="w-full py-6 text-muted-foreground"
+            onClick={() => setOpen(false)}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="destructive"
+            className="w-full py-6 text-base font-semibold"
+            onClick={() => reset()}
+          >
+            Sim, sair
           </Button>
         </DialogFooter>
       </DialogContent>
