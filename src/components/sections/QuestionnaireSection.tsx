@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertCircle, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -9,13 +9,7 @@ import { useSimulation } from "@/hooks/useSimulation";
 import { Progress } from "../ui/progress";
 import { isLastOdd } from "@/lib/utils";
 import { ResetQuestionnaireModal } from "../ResetQuestionnaireModal";
-import {
-  CorruptedDataModal,
-  LoadQuestionnaireErrorModal,
-  SaveAnswersErrorModal,
-} from "../feedback";
-import { clearDraft, loadDraft, saveDraft } from "@/lib/questionnaireDraft";
-import { useToast } from "@/hooks/use-toast";
+import { clearDraft, loadDraft } from "@/lib/questionnaireDraft";
 
 interface Props {
   onComplete: (result: ResultStep["result"]) => void;
@@ -26,21 +20,19 @@ export function QuestionnaireSection({ onComplete }: Props) {
     currentStep,
     answer,
     loadQuestionFromTrack,
-    start,
-    reset,
     startMutation,
     answerMutation,
     loadQuestionFromTrackMutation,
     getSessionMaxQuestions,
     finishDraftRestore,
+    history,
+    historyIndex,
+    selected,
+    setHistory,
+    setHistoryIndex,
+    setSelected,
   } = useSimulation();
-  const [selected, setSelected] = useState<string | null>(null);
   const [showError, setShowError] = useState(false);
-  const [history, setHistory] = useState<
-    Array<{ id: string; response: string | null }>
-  >([{ id: "q1", response: null }]);
-  const [historyIndex, setHistoryIndex] = useState(0);
-  const { toast } = useToast();
   const draftRestoredRef = useRef(false);
 
   const loading =
@@ -81,6 +73,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
     loadQuestionFromTrack(targetId).finally(() => {
       finishDraftRestore();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -113,110 +106,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
-  // Detect "corrupted data" condition (session id present locally but server rejects it)
-  const corruptedSession = useMemo(() => {
-    const errMsg =
-      (answerMutation.error as Error | null)?.message ||
-      (loadQuestionFromTrackMutation.error as Error | null)?.message ||
-      "";
-    return /sess(ã|a)o n(ã|a)o encontrada/i.test(errMsg);
-  }, [answerMutation.error, loadQuestionFromTrackMutation.error]);
-
-  const [dismissedLoadError, setDismissedLoadError] = useState(false);
-  const [dismissedAnswerError, setDismissedAnswerError] = useState(false);
-  const [dismissedCorrupted, setDismissedCorrupted] = useState(false);
-
-  const loadErrorOpen =
-    !dismissedLoadError &&
-    (startMutation.isError ||
-      (loadQuestionFromTrackMutation.isError && !corruptedSession));
-  const answerErrorOpen =
-    !dismissedAnswerError && answerMutation.isError && !corruptedSession;
-  const corruptedOpen = !dismissedCorrupted && corruptedSession;
-
-  const handleRetryLoad = () => {
-    setDismissedLoadError(false);
-
-    if (startMutation.isError) {
-      startMutation.reset();
-      start();
-    } else if (loadQuestionFromTrackMutation.isError) {
-      const id = history[historyIndex]?.id;
-
-      loadQuestionFromTrackMutation.reset();
-
-      if (id) loadQuestionFromTrack(id);
-    }
-  };
-  const handleRetryAnswer = () => {
-    if (!selected) return;
-    answerMutation.reset();
-    setDismissedAnswerError(false);
-    answer(question?.id ?? "", selected);
-  };
-
-  const handleClearAndRestart = () => {
-    setDismissedCorrupted(false);
-    clearDraft();
-    reset();
-    start();
-  };
-
-  const handleSaveDraft = () => {
-    const currentId =
-      currentStep && !currentStep.finished
-        ? (currentStep as QuestionStep).question.id
-        : history[historyIndex]?.id;
-
-    const updatedHistory = history.map((h, i) =>
-      i === historyIndex ? { ...h, response: selected } : h,
-    );
-
-    const ok = saveDraft({
-      history: updatedHistory,
-      historyIndex,
-      selected,
-      currentQuestionId: currentId,
-    });
-
-    toast({
-      title: ok ? "Rascunho salvo" : "Não foi possível salvar",
-      description: ok
-        ? "Suas respostas foram armazenadas localmente neste dispositivo."
-        : "O armazenamento local não está disponível.",
-      variant: ok ? "default" : "destructive",
-    });
-
-    if (ok) setDismissedAnswerError(true);
-  };
-
-  // Always-on modals layer (rendered even when there is no currentStep yet)
-  const modals = (
-    <>
-      <LoadQuestionnaireErrorModal
-        open={loadErrorOpen}
-        onOpenChange={(o) => !o && setDismissedLoadError(true)}
-        onRetry={handleRetryLoad}
-        retrying={
-          startMutation.isPending || loadQuestionFromTrackMutation.isPending
-        }
-      />
-      <SaveAnswersErrorModal
-        open={answerErrorOpen}
-        onOpenChange={(o) => !o && setDismissedAnswerError(true)}
-        onRetry={handleRetryAnswer}
-        onSaveDraft={handleSaveDraft}
-        retrying={answerMutation.isPending}
-      />
-      <CorruptedDataModal
-        open={corruptedOpen}
-        onOpenChange={(o) => !o && setDismissedCorrupted(true)}
-        onClearAndRestart={handleClearAndRestart}
-      />
-    </>
-  );
-
-  if (!currentStep || currentStep.finished === true) return modals;
+  if (!currentStep || currentStep.finished === true) return null;
 
   const { question } = currentStep as QuestionStep;
 
@@ -368,7 +258,6 @@ export function QuestionnaireSection({ onComplete }: Props) {
           </CardContent>
         </Card>
       </div>
-      {modals}
     </section>
   );
 }

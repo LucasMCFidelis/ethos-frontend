@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { QuizSection } from "@/components/sections/QuizSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
+import { SimulationFeedbackModals } from "@/components/feedback";
 
 const Index = () => {
   const { hash } = useLocation();
@@ -94,6 +95,7 @@ const Index = () => {
       </main>
 
       <Footer />
+      <SimulationFeedbackModals />
     </div>
   );
 };
