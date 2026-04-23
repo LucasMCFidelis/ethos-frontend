@@ -282,6 +282,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         });
     },
   });
+
+  const feedbackMutation = useMutation({
     mutationFn: (payload: FeedbackPayload) => {
       const sessionId = getSessionId();
 
@@ -290,6 +292,9 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
       }
 
       return api.post(`/simulation/sessions/${sessionId}/feedback`, payload);
+    },
+    onError: (error) => {
+      if (isServerError(error)) handleServerError({ kind: "feedback" });
     },
   });
 
