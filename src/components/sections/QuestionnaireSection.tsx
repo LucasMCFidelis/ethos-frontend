@@ -130,14 +130,24 @@ export function QuestionnaireSection({ onComplete }: Props) {
       return;
     }
 
-    setHistory((prev) => {
-      const updated = [...prev];
-      updated[historyIndex] = { ...updated[historyIndex], response: selected };
-      return updated;
-    });
-
-    setHistoryIndex((i) => i + 1);
-    answer(question.id, selected);
+    // Only advance progress AFTER the API confirms the answer was saved.
+    // On error, keep historyIndex unchanged so the progress bar stays put.
+    answerMutation.mutate(
+      { questionId: question.id, answerValue: selected },
+      {
+        onSuccess: () => {
+          setHistory((prev) => {
+            const updated = [...prev];
+            updated[historyIndex] = {
+              ...updated[historyIndex],
+              response: selected,
+            };
+            return updated;
+          });
+          setHistoryIndex((i) => i + 1);
+        },
+      },
+    );
   };
 
   const sessionMaxQuestions = getSessionMaxQuestions();
