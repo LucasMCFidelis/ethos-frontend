@@ -13,6 +13,13 @@ import type {
 import { clearDraft, hasDraft, saveDraft } from "@/lib/questionnaireDraft";
 import { useNavigate } from "react-router-dom";
 import { IS_MAINTENANCE } from "@/hooks/useMaintenance";
+import { ApiError } from "@/lib/api";
+import {
+  clearRetryContext,
+  loadRetryContext,
+  saveRetryContext,
+  type RetryContext,
+} from "@/lib/serverErrorRetry";
 
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
