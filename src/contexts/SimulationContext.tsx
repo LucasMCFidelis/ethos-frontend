@@ -166,6 +166,21 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  function isServerError(err: unknown): boolean {
+    return err instanceof ApiError && err.status >= 500;
+  }
+
+  function handleServerError(ctx: RetryContext) {
+    // Persist a draft so the user does not lose progress.
+    try {
+      saveCurrentDraft();
+    } catch {
+      /* ignore */
+    }
+    saveRetryContext(ctx);
+    navigate("/server-error");
+  }
+
   const startMutation = useMutation({
     mutationFn: (trackId: string) =>
       api.get<{ sessionId: string } & QuestionStep>(
