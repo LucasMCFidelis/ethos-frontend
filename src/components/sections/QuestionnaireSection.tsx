@@ -18,7 +18,6 @@ interface Props {
 export function QuestionnaireSection({ onComplete }: Props) {
   const {
     currentStep,
-    answer,
     loadQuestionFromTrack,
     startMutation,
     answerMutation,
