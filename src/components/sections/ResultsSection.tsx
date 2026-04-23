@@ -55,7 +55,7 @@ interface Props {
 }
 
 export function ResultsSection({ result, onRestart }: Props) {
-  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(true);
 
   const {
     icon: Icon,
