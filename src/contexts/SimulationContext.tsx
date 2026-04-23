@@ -236,6 +236,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         });
     },
   });
+
+  const loadQuestionFromTrackMutation = useMutation({
     mutationFn: ({ questionId }: { questionId: string }) =>
       api.get<QuestionStep["question"]>(
         `/simulation/tracks/confidencialidade/questions/${questionId}`,
@@ -249,6 +251,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
           options: Object.keys(question.options),
         },
       });
+    },
+    onError: (error, vars) => {
+      if (isServerError(error))
+        handleServerError({ kind: "loadQuestion", questionId: vars.questionId });
     },
   });
 
