@@ -227,9 +227,15 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     onSuccess: (step) => {
       setCurrentStep(step);
     },
+    onError: (error, vars) => {
+      if (isServerError(error))
+        handleServerError({
+          kind: "answer",
+          questionId: vars.questionId,
+          answerValue: vars.answerValue,
+        });
+    },
   });
-
-  const loadQuestionFromTrackMutation = useMutation({
     mutationFn: ({ questionId }: { questionId: string }) =>
       api.get<QuestionStep["question"]>(
         `/simulation/tracks/confidencialidade/questions/${questionId}`,
