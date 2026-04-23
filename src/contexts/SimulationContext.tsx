@@ -106,7 +106,7 @@ interface SimulationContextValue {
   retryLoad: () => void;
   retryAnswer: () => void;
   clearAndRestart: () => void;
-}
+  retryFromServerError: () => void;
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const SimulationContext = createContext<SimulationContextValue | null>(
