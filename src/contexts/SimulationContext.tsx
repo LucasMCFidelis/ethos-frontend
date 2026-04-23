@@ -417,6 +417,43 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     start();
   }
 
+  function retryFromServerError() {
+    const ctx = loadRetryContext();
+    clearRetryContext();
+    // Always navigate back to the home page; the questionnaire
+    // section will auto-restore from the local draft on mount.
+    navigate("/");
+    setShowQuestionnaire(true);
+
+    if (!ctx) return;
+
+    // Reset prior errors so the mutations can be retried cleanly.
+    startMutation.reset();
+    answerMutation.reset();
+    loadQuestionFromTrackMutation.reset();
+    loadAnsweredStepMutation.reset();
+    feedbackMutation.reset();
+
+    switch (ctx.kind) {
+      case "start":
+        start(ctx.trackId);
+        break;
+      case "answer":
+        answer(ctx.questionId, ctx.answerValue);
+        break;
+      case "loadQuestion":
+        loadQuestionFromTrack(ctx.questionId);
+        break;
+      case "loadAnsweredStep":
+        loadAnsweredStep(ctx.questionId);
+        break;
+      // "feedback" and "unknown" do not auto-retry; the user can
+      // re-trigger the action from the UI after returning home.
+      default:
+        break;
+    }
+  }
+
   return (
     <SimulationContext.Provider
       value={{
