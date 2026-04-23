@@ -196,6 +196,9 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         question: data.question,
       });
     },
+    onError: (error, trackId) => {
+      if (isServerError(error)) handleServerError({ kind: "start", trackId });
+    },
   });
 
   const answerMutation = useMutation({
