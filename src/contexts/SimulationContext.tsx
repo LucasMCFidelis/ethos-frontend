@@ -274,9 +274,14 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     onSuccess: (step) => {
       setCurrentStep(step);
     },
+    onError: (error, vars) => {
+      if (isServerError(error))
+        handleServerError({
+          kind: "loadAnsweredStep",
+          questionId: vars.questionId,
+        });
+    },
   });
-
-  const feedbackMutation = useMutation({
     mutationFn: (payload: FeedbackPayload) => {
       const sessionId = getSessionId();
 
