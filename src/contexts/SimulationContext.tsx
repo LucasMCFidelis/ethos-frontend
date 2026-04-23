@@ -13,6 +13,13 @@ import type {
 import { clearDraft, hasDraft, saveDraft } from "@/lib/questionnaireDraft";
 import { useNavigate } from "react-router-dom";
 import { IS_MAINTENANCE } from "@/hooks/useMaintenance";
+import { ApiError } from "@/lib/api";
+import {
+  clearRetryContext,
+  loadRetryContext,
+  saveRetryContext,
+  type RetryContext,
+} from "@/lib/serverErrorRetry";
 
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
@@ -99,6 +106,7 @@ interface SimulationContextValue {
   retryLoad: () => void;
   retryAnswer: () => void;
   clearAndRestart: () => void;
+  retryFromServerError: () => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -158,6 +166,21 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  function isServerError(err: unknown): boolean {
+    return err instanceof ApiError && err.status >= 500;
+  }
+
+  function handleServerError(ctx: RetryContext) {
+    // Persist a draft so the user does not lose progress.
+    try {
+      saveCurrentDraft();
+    } catch {
+      /* ignore */
+    }
+    saveRetryContext(ctx);
+    navigate("/server-error");
+  }
+
   const startMutation = useMutation({
     mutationFn: (trackId: string) =>
       api.get<{ sessionId: string } & QuestionStep>(
@@ -172,6 +195,9 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         finished: false,
         question: data.question,
       });
+    },
+    onError: (error, trackId) => {
+      if (isServerError(error)) handleServerError({ kind: "start", trackId });
     },
   });
 
@@ -201,6 +227,14 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     onSuccess: (step) => {
       setCurrentStep(step);
     },
+    onError: (error, vars) => {
+      if (isServerError(error))
+        handleServerError({
+          kind: "answer",
+          questionId: vars.questionId,
+          answerValue: vars.answerValue,
+        });
+    },
   });
 
   const loadQuestionFromTrackMutation = useMutation({
@@ -217,6 +251,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
           options: Object.keys(question.options),
         },
       });
+    },
+    onError: (error, vars) => {
+      if (isServerError(error))
+        handleServerError({ kind: "loadQuestion", questionId: vars.questionId });
     },
   });
 
@@ -236,6 +274,13 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     onSuccess: (step) => {
       setCurrentStep(step);
     },
+    onError: (error, vars) => {
+      if (isServerError(error))
+        handleServerError({
+          kind: "loadAnsweredStep",
+          questionId: vars.questionId,
+        });
+    },
   });
 
   const feedbackMutation = useMutation({
@@ -247,6 +292,9 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
       }
 
       return api.post(`/simulation/sessions/${sessionId}/feedback`, payload);
+    },
+    onError: (error) => {
+      if (isServerError(error)) handleServerError({ kind: "feedback" });
     },
   });
 
@@ -369,6 +417,43 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     start();
   }
 
+  function retryFromServerError() {
+    const ctx = loadRetryContext();
+    clearRetryContext();
+    // Always navigate back to the home page; the questionnaire
+    // section will auto-restore from the local draft on mount.
+    navigate("/");
+    setShowQuestionnaire(true);
+
+    if (!ctx) return;
+
+    // Reset prior errors so the mutations can be retried cleanly.
+    startMutation.reset();
+    answerMutation.reset();
+    loadQuestionFromTrackMutation.reset();
+    loadAnsweredStepMutation.reset();
+    feedbackMutation.reset();
+
+    switch (ctx.kind) {
+      case "start":
+        start(ctx.trackId);
+        break;
+      case "answer":
+        answer(ctx.questionId, ctx.answerValue);
+        break;
+      case "loadQuestion":
+        loadQuestionFromTrack(ctx.questionId);
+        break;
+      case "loadAnsweredStep":
+        loadAnsweredStep(ctx.questionId);
+        break;
+      // "feedback" and "unknown" do not auto-retry; the user can
+      // re-trigger the action from the UI after returning home.
+      default:
+        break;
+    }
+  }
+
   return (
     <SimulationContext.Provider
       value={{
@@ -408,6 +493,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         retryLoad,
         retryAnswer,
         clearAndRestart,
+        retryFromServerError,
       }}
     >
       {children}
