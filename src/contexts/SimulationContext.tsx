@@ -494,6 +494,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         retryAnswer,
         clearAndRestart,
         retryFromServerError,
+      }}
     >
       {children}
     </SimulationContext.Provider>
