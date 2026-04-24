@@ -30,14 +30,21 @@ interface ActionsProps {
   secondary?: ActionBase;
 }
 
-function DefaultActions({
-  primary = { text: "Voltar para Início", action: () => {} },
-  secondary,
-}: ActionsProps) {
+function DefaultActions({ primary, secondary }: ActionsProps) {
+  const navigate = useNavigate();
+  const resolvedPrimary = primary ?? {
+    text: "Voltar para Início",
+    action: () => navigate("/"),
+  };
+
   return (
     <div className="flex flex-col sm:flex-row px-4 gap-3 justify-center">
-      <Button variant="cta" className="py-6" onClick={() => primary.action()}>
-        {primary.text}
+      <Button
+        variant="cta"
+        className="py-6"
+        onClick={() => resolvedPrimary.action()}
+      >
+        {resolvedPrimary.text}
       </Button>
       {secondary && (
         <Button
