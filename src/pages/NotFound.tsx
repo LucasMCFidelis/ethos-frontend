@@ -1,7 +1,10 @@
 import { Frown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { ErrorPage } from "@/components/ErrorPage";
 
 export default function NotFound() {
+  const navigate = useNavigate();
+
   return (
     <ErrorPage
       status={404}
@@ -11,7 +14,7 @@ export default function NotFound() {
       actionsProps={{
         secondary: {
           text: "Precisa de Ajuda?",
-          action: () => {},
+          action: () => navigate("/#contato"),
         },
       }}
     />
