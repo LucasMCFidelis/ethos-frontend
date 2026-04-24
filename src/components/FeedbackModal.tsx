@@ -39,6 +39,7 @@ export function FeedbackModal() {
 
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const [form, setForm] = useState({
     rate: null as number | null,
@@ -49,6 +50,7 @@ export function FeedbackModal() {
   const canSubmit = form.rate !== null && form.useObjective !== null;
 
   const loading = feedbackMutation.isPending;
+  const alreadySent = feedbackMutation.isSuccess;
 
   function resetForm() {
     setForm({
@@ -62,7 +64,7 @@ export function FeedbackModal() {
 
   function handleClose() {
     setOpen(false);
-    resetForm();
+    if (!alreadySent) resetForm();
   }
 
   function handleSubmit() {
@@ -76,7 +78,10 @@ export function FeedbackModal() {
       },
       {
         onSuccess: () => {
-          handleClose();
+          setShowSuccess(true);
+          toast.success("Feedback enviado com sucesso!", {
+            description: "Obrigado pela sua contribuição.",
+          });
         },
       },
     );
