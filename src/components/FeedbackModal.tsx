@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Star, Send, MessageSquare } from "lucide-react";
+import { Star, Send, MessageSquare, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
