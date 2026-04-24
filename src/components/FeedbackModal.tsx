@@ -91,13 +91,13 @@ export function FeedbackModal() {
       </DialogTrigger>
 
       <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
-        <DialogHeader>
+        <DialogHeader className="text-start max-w-48 md:max-w-full">
           <DialogTitle className="text-primary">
-            <h2>Sua opinião é importante</h2>
+            <h2>Sua Contribuição é Valiosa!</h2>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-8">
+        <div className="space-y-8 max-w-[80%]">
           {/* Avaliação */}
           <section className="space-y-3 ">
             <Label>Como você avaliaria o resultado?</Label>
@@ -139,7 +139,8 @@ export function FeedbackModal() {
           {/* Objetivo */}
           <section className="space-y-4">
             <Label>
-              Qual seu principal objetivo ao usar o Ethos? (Selecione uma opção)
+              Qual é seu principal objetivo ao utilizar o Ethos? (Selecione uma
+              opção)
             </Label>
 
             <div className="grid sm:grid-cols-2 gap-5">
@@ -148,7 +149,7 @@ export function FeedbackModal() {
                   key={item}
                   size="lg"
                   variant="outline"
-                  className={`py-8 text-md text-wrap font-normal text-start hover:bg-transparent ${
+                  className={`py-3 text-md text-wrap font-normal h-fit text-start hover:bg-transparent ${
                     form.useObjective == item
                       ? "border-2 border-primary-700"
                       : ""
@@ -164,13 +165,13 @@ export function FeedbackModal() {
           {/* Sugestão */}
           <section className="space-y-3">
             <Label htmlFor="suggestion">
-              Qual sugestão ou o novo recurso que você gostaria de ver no Ethos?
+              Que novo recurso você gostaria de implementar no Ethos?
             </Label>
 
             <Textarea
               id="suggestion"
               rows={4}
-              placeholder="Descreva a sugestão ou o novo recurso que você gostaria de ver..."
+              placeholder="Descreva o novo recurso que você gostaria de implementar..."
               value={form.suggestion}
               className="resize-none"
               onChange={(e) =>
@@ -183,10 +184,10 @@ export function FeedbackModal() {
           </section>
 
           {/* Footer */}
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 py-3 sm:py-6"
               onClick={handleClose}
               disabled={loading}
             >
@@ -194,12 +195,12 @@ export function FeedbackModal() {
             </Button>
 
             <Button
-              className="flex-1 gap-2"
+              className="flex-1 py-3 sm:py-6 gap-2 disabled:bg-muted disabled:text-neutral-500"
               onClick={handleSubmit}
               disabled={!canSubmit || loading}
             >
               <Send className="h-4 w-4" />
-              {loading ? "Enviando..." : "Enviar"}
+              {loading ? "Enviando..." : "Enviar Contribuição"}
             </Button>
           </div>
         </div>
