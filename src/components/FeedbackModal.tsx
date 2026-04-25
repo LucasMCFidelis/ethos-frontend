@@ -145,7 +145,7 @@ export function FeedbackModal() {
               </DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-8 max-w-[80%]">
+            <div className="space-y-8 max-w-[80%] sm:max-w-full">
               {/* Avaliação */}
               <section className="space-y-3 ">
                 <Label>Como você avaliaria o resultado?</Label>
