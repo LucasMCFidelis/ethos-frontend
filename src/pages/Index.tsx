@@ -84,7 +84,7 @@ const Index = () => {
               data-test="contact-button-email"
             >
               <a
-                href="mailto:contato@ethos.example.com"
+                href="mailto:fidelis.lucasm@gmail.com"
                 aria-label="Enviar e-mail para a equipe Ethos"
               >
                 Enviar E-mail
