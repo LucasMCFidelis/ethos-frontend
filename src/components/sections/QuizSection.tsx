@@ -47,11 +47,29 @@ export function QuizSection() {
   }, [showQuestionnaire, currentStep, result]);
 
   useEffect(() => {
-    if (result) {
-      document
-        .getElementById("results")
-        ?.scrollIntoView({ behavior: "smooth" });
-    }
+    if (!result) return;
+
+    let cancelled = false;
+    const tryScroll = (attempt = 0) => {
+      if (cancelled) return;
+      const el = document.getElementById("results");
+      if (el) {
+        const header = document.querySelector("header");
+        const headerHeight = header?.getBoundingClientRect().height ?? 0;
+        const top =
+          el.getBoundingClientRect().top + window.scrollY - headerHeight;
+        window.scrollTo({ top, behavior: "smooth" });
+        return;
+      }
+      if (attempt < 20) {
+        requestAnimationFrame(() => tryScroll(attempt + 1));
+      }
+    };
+    tryScroll();
+
+    return () => {
+      cancelled = true;
+    };
   }, [result]);
 
   return (
