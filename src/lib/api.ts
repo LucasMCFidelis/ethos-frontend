@@ -10,11 +10,20 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const headers = new Headers(options?.headers);
+
+  const hasBody = options?.body !== undefined;
+
+  if (hasBody) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  
   let res: Response
   try {
     res = await fetch(`${BASE_URL}${path}`, {
-      headers: { 'Content-Type': 'application/json' },
       ...options,
+      headers,
     })
   } catch (err) {
     // Network failure (server unreachable, DNS, CORS at network level).
@@ -42,4 +51,8 @@ export const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body: unknown) =>
     request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
+  delete: <T = void>(path: string) =>
+    request<T>(path, {
+      method: 'DELETE',
+    }),
 }
