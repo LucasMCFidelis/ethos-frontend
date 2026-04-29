@@ -220,6 +220,28 @@ export function FeedbackModal() {
                     </Button>
                   ))}
                 </div>
+
+                {isOtherSelected && (
+                  <div className="space-y-2 pt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <Label htmlFor="otherObjective">
+                      Por favor, especifique seu objetivo
+                    </Label>
+                    <Textarea
+                      id="otherObjective"
+                      rows={2}
+                      placeholder="Descreva seu objetivo ao utilizar o Ethos..."
+                      value={form.otherObjective}
+                      className="resize-none"
+                      data-test="feedback-other-objective-input"
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          otherObjective: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                )}
               </section>
 
               {/* Sugestão */}
