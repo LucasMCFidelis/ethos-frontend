@@ -63,6 +63,7 @@ export function FeedbackModal() {
     setForm({
       rate: null,
       useObjective: null,
+      otherObjective: "",
       suggestion: "",
     });
 
