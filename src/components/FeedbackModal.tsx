@@ -81,7 +81,9 @@ export function FeedbackModal() {
     sendFeedback(
       {
         rate: form.rate!,
-        useObjective: form.useObjective!,
+        useObjective: isOtherSelected
+          ? `Outro: ${form.otherObjective.trim()}`
+          : form.useObjective!,
         suggestion: form.suggestion || undefined,
       },
       {
