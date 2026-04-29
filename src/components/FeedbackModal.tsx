@@ -44,10 +44,17 @@ export function FeedbackModal() {
   const [form, setForm] = useState({
     rate: null as number | null,
     useObjective: null as string | null,
+    otherObjective: "",
     suggestion: "",
   });
 
-  const canSubmit = form.rate !== null && form.useObjective !== null;
+  const OTHER_OPTION = "Outro (por favor, especifique)";
+  const isOtherSelected = form.useObjective === OTHER_OPTION;
+
+  const canSubmit =
+    form.rate !== null &&
+    form.useObjective !== null &&
+    (!isOtherSelected || form.otherObjective.trim().length > 0);
 
   const loading = feedbackMutation.isPending;
   const alreadySent = feedbackMutation.isSuccess;
