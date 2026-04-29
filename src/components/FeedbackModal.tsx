@@ -199,7 +199,7 @@ export function FeedbackModal() {
                       key={item}
                       size="lg"
                       variant="outline"
-                      className={`py-3 text-md text-wrap font-normal h-fit text-start hover:bg-transparent ${
+                      className={`py-3 text-md text-wrap font-normal h-fit sm:h-auto text-start hover:bg-transparent ${
                         form.useObjective == item
                           ? "border-2 border-primary-700"
                           : ""
