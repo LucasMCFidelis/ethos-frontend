@@ -15,7 +15,7 @@ import {
 import { useSimulation } from "@/hooks/useSimulation";
 
 export function ResetQuestionnaireModal() {
-  const { reset } = useSimulation();
+  const { deleteSessionMutation, deleteSession } = useSimulation();
 
   const [open, setOpen] = useState(false);
 
@@ -56,6 +56,12 @@ export function ResetQuestionnaireModal() {
           </div>
         </DialogHeader>
 
+        {deleteSessionMutation.isError && (
+          <p className="text-sm text-destructive">
+            Não foi possível concluir a ação, tente novamente mais tarde{" "}
+          </p>
+        )}
+
         <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:space-x-0">
           <Button
             variant="outline"
@@ -67,7 +73,8 @@ export function ResetQuestionnaireModal() {
           <Button
             variant="destructive"
             className="w-full py-6 text-base font-semibold"
-            onClick={() => reset()}
+            onClick={deleteSession}
+            disabled={deleteSessionMutation.isPending}
           >
             Sim, sair
           </Button>

@@ -84,7 +84,10 @@ interface SimulationContextValue {
 
   feedbackMutation: UseMutationResult<unknown, Error, FeedbackPayload>;
 
+  deleteSessionMutation: UseMutationResult<void, Error, void>;
+
   start: (trackId?: string) => void;
+  deleteSession: () => void;
   answer: (questionId: string, answerValue: string) => void;
   loadQuestionFromTrack: (
     questionId: string,
@@ -254,7 +257,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
     onError: (error, vars) => {
       if (isServerError(error))
-        handleServerError({ kind: "loadQuestion", questionId: vars.questionId });
+        handleServerError({
+          kind: "loadQuestion",
+          questionId: vars.questionId,
+        });
     },
   });
 
@@ -298,6 +304,28 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const deleteSessionMutation = useMutation({
+    mutationFn: async () => {
+      const sessionId = getSessionId();
+
+      if (!sessionId) {
+        throw new Error("Sessão não encontrada.");
+      }
+
+      await api.delete(`/simulation/sessions/${sessionId}`);
+    },
+
+    onSuccess: () => {
+      reset();
+    },
+
+    onError: (error) => {
+      if (isServerError(error)) {
+        handleServerError({ kind: "unknown" });
+      }
+    },
+  });
+
   function start(trackId = "confidencialidade") {
     startMutation.mutate(trackId);
   }
@@ -332,6 +360,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     feedbackMutation.mutate(payload, options);
   }
 
+  function deleteSession() {
+    deleteSessionMutation.mutate();
+  }
+
   function reset() {
     clearSessionId();
     clearSessionMaxQuestions();
@@ -347,6 +379,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     loadQuestionFromTrackMutation.reset();
     loadAnsweredStepMutation.reset();
     feedbackMutation.reset();
+    deleteSessionMutation.reset()
   }
 
   function handleStartQuiz() {
@@ -475,8 +508,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         loadQuestionFromTrackMutation,
         loadAnsweredStepMutation,
         feedbackMutation,
+        deleteSessionMutation,
 
         start,
+        deleteSession,
         answer,
         loadQuestionFromTrack,
         loadAnsweredStep,

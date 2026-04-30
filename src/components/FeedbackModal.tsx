@@ -44,10 +44,17 @@ export function FeedbackModal() {
   const [form, setForm] = useState({
     rate: null as number | null,
     useObjective: null as string | null,
+    otherObjective: "",
     suggestion: "",
   });
 
-  const canSubmit = form.rate !== null && form.useObjective !== null;
+  const OTHER_OPTION = "Outro (por favor, especifique)";
+  const isOtherSelected = form.useObjective === OTHER_OPTION;
+
+  const canSubmit =
+    form.rate !== null &&
+    form.useObjective !== null &&
+    (!isOtherSelected || form.otherObjective.trim().length > 0);
 
   const loading = feedbackMutation.isPending;
   const alreadySent = feedbackMutation.isSuccess;
@@ -56,6 +63,7 @@ export function FeedbackModal() {
     setForm({
       rate: null,
       useObjective: null,
+      otherObjective: "",
       suggestion: "",
     });
 
@@ -73,7 +81,9 @@ export function FeedbackModal() {
     sendFeedback(
       {
         rate: form.rate!,
-        useObjective: form.useObjective!,
+        useObjective: isOtherSelected
+          ? `Outro: ${form.otherObjective.trim()}`
+          : form.useObjective!,
         suggestion: form.suggestion || undefined,
       },
       {
@@ -199,7 +209,7 @@ export function FeedbackModal() {
                       key={item}
                       size="lg"
                       variant="outline"
-                      className={`py-3 text-md text-wrap font-normal h-fit text-start hover:bg-transparent ${
+                      className={`py-3 text-md text-wrap font-normal h-fit sm:h-auto text-start hover:bg-transparent ${
                         form.useObjective == item
                           ? "border-2 border-primary-700"
                           : ""
@@ -210,6 +220,28 @@ export function FeedbackModal() {
                     </Button>
                   ))}
                 </div>
+
+                {isOtherSelected && (
+                  <div className="space-y-2 pt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <Label htmlFor="otherObjective">
+                      Por favor, especifique seu objetivo
+                    </Label>
+                    <Textarea
+                      id="otherObjective"
+                      rows={2}
+                      placeholder="Descreva seu objetivo ao utilizar o Ethos..."
+                      value={form.otherObjective}
+                      className="resize-none"
+                      data-test="feedback-other-objective-input"
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          otherObjective: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                )}
               </section>
 
               {/* Sugestão */}
