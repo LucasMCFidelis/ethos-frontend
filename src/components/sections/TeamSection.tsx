@@ -126,7 +126,11 @@ const TeamSection = () => {
                 <CardHeader className="items-center">
                   <Avatar className="h-24 w-24 mb-4">
                     {member.imageUrl ? (
-                      <AvatarImage src={member.imageUrl} alt={member.name} />
+                      <AvatarImage
+                        src={member.imageUrl}
+                        alt={member.name}
+                        className="object-cover"
+                      />
                     ) : null}
                     <AvatarFallback className="text-3xl font-bold text-primary">
                       {getInitials(member.name)}
