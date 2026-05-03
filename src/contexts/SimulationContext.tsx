@@ -24,6 +24,8 @@ import {
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
 
+export type StartOrigin = "hero" | "header" | null;
+
 export interface FeedbackPayload {
   rate: number;
   useObjective: string;
@@ -57,6 +59,8 @@ interface SimulationContextValue {
   setHistory: React.Dispatch<React.SetStateAction<QuestionnaireHistoryEntry[]>>;
   setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
   setSelected: React.Dispatch<React.SetStateAction<string | null>>;
+
+  startOrigin: StartOrigin;
 
   startMutation: UseMutationResult<
     { sessionId: string } & QuestionStep,
@@ -100,7 +104,7 @@ interface SimulationContextValue {
 
   getSessionMaxQuestions: () => number;
   reset: () => void;
-  handleStartQuiz: () => void;
+  handleStartQuiz: (origin: StartOrigin) => void;
   handleComplete: (r: ResultStep["result"]) => void;
   handleRestart: () => void;
 
@@ -148,6 +152,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
   const [showQuestionnaire, setShowQuestionnaire] = useState(() => hasDraft());
   const [isRestoringDraft, setIsRestoringDraft] = useState(() => hasDraft());
+
+  const [startOrigin, setStartOrigin] = useState<StartOrigin>(null);
 
   // Shared questionnaire state
   const [history, setHistory] = useState<QuestionnaireHistoryEntry[]>([
@@ -373,22 +379,24 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     setHistory([{ id: "q1", response: null }]);
     setHistoryIndex(0);
     setSelected(null);
+    setStartOrigin(null);
 
     startMutation.reset();
     answerMutation.reset();
     loadQuestionFromTrackMutation.reset();
     loadAnsweredStepMutation.reset();
     feedbackMutation.reset();
-    deleteSessionMutation.reset()
+    deleteSessionMutation.reset();
   }
 
-  function handleStartQuiz() {
+  function handleStartQuiz(origin: StartOrigin) {
     if (IS_MAINTENANCE) {
       navigate("/maintenance");
       return;
     }
     reset();
     setResult(null);
+    setStartOrigin(origin);
     setShowQuestionnaire(true);
     start();
   }
@@ -502,6 +510,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         setHistory,
         setHistoryIndex,
         setSelected,
+
+        startOrigin,
 
         startMutation,
         answerMutation,

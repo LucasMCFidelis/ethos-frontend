@@ -4,7 +4,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { useSimulation } from "@/hooks/useSimulation";
 
 const Hero = () => {
-  const { startMutation, handleStartQuiz } = useSimulation();
+  const { startMutation, startOrigin, handleStartQuiz } = useSimulation();
+
+  const START_ORIGIN_ID = "hero"
+  const isPending = startMutation.isPending && startOrigin === START_ORIGIN_ID
 
   return (
     <section className="relative flex mx-auto lg:min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
@@ -37,10 +40,10 @@ const Hero = () => {
             size="lg"
             data-test="hero-button-cta"
             className="text-base px-8 py-6 w-60 gap-2 shadow-md"
-            onClick={() => handleStartQuiz()}
+            onClick={() => handleStartQuiz(START_ORIGIN_ID)}
             disabled={startMutation.isPending}
           >
-            {startMutation.isPending ? (
+            {isPending ? (
               <>
                 Iniciando Simulação
                 <Spinner />
