@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { QuizSection } from "@/components/sections/QuizSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
 import { SimulationFeedbackModals } from "@/components/feedback";
+import TeamSection from "@/components/sections/TeamSection";
 
 const Index = () => {
   const { hash } = useLocation();
@@ -69,6 +70,8 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        <TeamSection/>
 
         {/* Entre em Contato */}
         <section id="contato" className="py-20 bg-muted">
