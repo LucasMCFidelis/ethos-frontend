@@ -10,7 +10,7 @@ const Hero = () => {
   const isPending = startMutation.isPending && startOrigin === START_ORIGIN_ID
 
   return (
-    <section className="relative flex mx-auto lg:min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
+    <section className="relative flex mx-auto lg:min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden bg-white">
       <div className="container max-w-lg sm:max-w-2xl md:max-w-3xl relative z-10 flex flex-col items-center text-center px-4 py-24 md:py-32">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}

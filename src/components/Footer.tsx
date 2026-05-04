@@ -23,7 +23,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border">
       <div className="container flex flex-col sm:flex-row items-center justify-between gap-4 py-8 text-muted-foreground">
         <p className="text-caption">
           © {year} Ethos. Todos os direitos reservados.

@@ -88,7 +88,7 @@ const MemberLink = ({ href, label, dataTest, icon }: MemberLinkProps) => (
 
 const TeamSection = () => {
   return (
-    <section className="flex-1 py-20 bg-background">
+    <section className="flex-1 py-20 bg-white">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-center text-foreground mb-4">Nossa Equipe</h2>
