@@ -79,7 +79,7 @@ const MemberLink = ({ href, label, dataTest, icon }: MemberLinkProps) => (
     target="_blank"
     rel="noopener noreferrer"
     aria-label={label}
-    className="bg-neutral-200 p-2 rounded-sm hover:text-primary transition-colors"
+    className="bg-neutral-100 p-2 rounded-sm hover:text-primary transition-colors"
     data-test={dataTest}
   >
     {icon}
@@ -116,12 +116,12 @@ const TeamSection = () => {
             Em breve apresentaremos os membros da equipe.
           </p>
         ) : (
-          <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-6">
             {members.map((member) => (
               <Card
                 key={member.name}
                 data-test={`team-card-${member.name.toLowerCase().replace(/\s+/g, "-")}`}
-                className="flex flex-col justify-between items-center text-center bg-neutral-100"
+                className="flex flex-col justify-between items-center text-center bg-neutral-50 border-neutral-200 "
               >
                 <CardHeader className="items-center">
                   <Avatar className="h-24 w-24 mb-4">

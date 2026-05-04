@@ -36,6 +36,8 @@ export const members: TeamMember[] = [
     name: "Andressa Mourão",
     position: "UX/UI Designer",
     imageUrl: "/team/andressa-mourao.webp",
+    portfolio:
+      "https://andressamourao.notion.site/Ol-voc-chegou-no-Portf-lio-da-Andressa-49d1bfb2ed78839192dc817ef2fb8f90",
     linkedIn: "https://www.linkedin.com/in/andressamourao/ ",
   },
   {
