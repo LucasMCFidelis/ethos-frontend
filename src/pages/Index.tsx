@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { QuizSection } from "@/components/sections/QuizSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
 import { SimulationFeedbackModals } from "@/components/feedback";
+import TeamSection from "@/components/sections/TeamSection";
 
 const Index = () => {
   const { hash } = useLocation();
@@ -32,7 +33,7 @@ const Index = () => {
         <HowItWorksSection />
 
         {/* Sobre Ética na Telemedicina */}
-        <section id="sobre-etica" className="py-20 bg-background">
+        <section id="sobre-etica" className="py-20 bg-white">
           <div className="container lg:max-w-4xl">
             <h2 className="text-center text-foreground mb-10">
               Sobre Ética na Telemedicina
@@ -70,8 +71,10 @@ const Index = () => {
           </div>
         </section>
 
+        <TeamSection/>
+
         {/* Entre em Contato */}
-        <section id="contato" className="py-20 bg-muted">
+        <section id="contato" className="py-20">
           <div className="container max-w-2xl text-center">
             <h2 className="text-foreground mb-4">Entre em Contato</h2>
             <p className="text-body-md mb-8">
