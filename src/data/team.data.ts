@@ -15,7 +15,13 @@ export const members: TeamMember[] = [
     linkedIn: "https://www.linkedin.com/in/anderson-mori-de-almeida",
   },
   {
-    name: "Ana Teresa",
+    name: "Patrick Eduardo Ribeiro",
+    position: "Scrum Master",
+    imageUrl: "/team/patrick-ribeiro.webp",
+    linkedIn: "https://www.linkedin.com/in/patrick-rib",
+  },
+  {
+    name: "Ana Teresa Nogueira",
     position: "Product Owner",
     imageUrl: "/team/ana-teresa.webp",
     linkedIn: "https://www.linkedin.com/in/ana-tereza-nogueira-3aaa8222",
@@ -23,7 +29,7 @@ export const members: TeamMember[] = [
   {
     name: "Adonis Bastos",
     position: "Product Owner",
-    imageUrl: "/team/.webp",
+    imageUrl: "/team/adonis-bastos.webp",
     linkedIn: "http://www.linkedin.com/in/adonisbastos",
   },
   {
