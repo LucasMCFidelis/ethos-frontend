@@ -280,6 +280,7 @@ export function FeedbackModal() {
                   className="flex-1 py-3 sm:py-6 gap-2 disabled:bg-muted disabled:text-neutral-500"
                   onClick={handleSubmit}
                   disabled={!canSubmit || loading}
+                  data-test="feedback-button-submit"
                 >
                   <Send className="h-4 w-4" />
                   {loading ? "Enviando..." : "Enviar Contribuição"}

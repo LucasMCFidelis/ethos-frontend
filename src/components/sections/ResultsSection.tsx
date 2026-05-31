@@ -151,7 +151,7 @@ export function ResultsSection({ result, onRestart }: Props) {
 
         {/* Ações */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button className="flex-1 gap-3 py-6 text-base" onClick={onRestart}>
+          <Button className="flex-1 gap-3 py-6 text-base" onClick={onRestart} data-test="result-button-restart">
             <RotateCcw size={20} />
             Fazer Novamente
           </Button>

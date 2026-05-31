@@ -29,6 +29,7 @@ export function ResetQuestionnaireModal() {
             size="icon"
             className="size-6 text-muted-foreground"
             onClick={() => setOpen(true)}
+            data-test="questionnaire-button-close"
           >
             <X />
           </Button>

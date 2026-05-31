@@ -251,6 +251,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 className="w-full py-6 text-base"
                 onClick={handleNext}
                 disabled={!selected || loading}
+                data-test="questionnaire-button-next"
               >
                 {loading ? (
                   <>
