@@ -64,7 +64,7 @@ export function ResultsSection({ result, onRestart }: Props) {
   } = levelConfig[result.key] ?? levelConfig[""];
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-background" id="results">
+    <section className="py-12 sm:py-16 lg:py-20 bg-background" id="results" data-test="result-container">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-foreground">Resultado da Análise</h2>
@@ -76,9 +76,9 @@ export function ResultsSection({ result, onRestart }: Props) {
         >
           <div className="grid lg:grid-cols-[1fr_200px]">
             <CardContent className="p-6 sm:p-8 space-y-6">
-              <h3>{result.label}</h3>
+              <h3 data-test="result-label">{result.label}</h3>
 
-              <p className="text-foreground text-base leading-relaxed">
+              <p className="text-foreground text-base leading-relaxed" data-test="result-description">
                 {result.description}
               </p>
 
@@ -92,6 +92,7 @@ export function ResultsSection({ result, onRestart }: Props) {
                     <Button
                       variant="ghost"
                       className="gap-2 px-2 text-primary hover:text-primary"
+                      data-test="result-button-toggle-actions"
                     >
                       <ChevronDown
                         size={20}
@@ -106,7 +107,7 @@ export function ResultsSection({ result, onRestart }: Props) {
                       style={{ borderRadius: "var(--radius)" }}
                     >
                       <h4>Ações Recomendadas</h4>
-                      <ul className="space-y-3">
+                      <ul className="space-y-3" data-test="result-actions-list">
                         {result.actions.map((action, i) => (
                           <li key={i} className="flex items-start gap-3">
                             <div className="mt-2 w-2 h-2 rounded-full bg-primary flex-shrink-0" />
@@ -151,7 +152,7 @@ export function ResultsSection({ result, onRestart }: Props) {
 
         {/* Ações */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button className="flex-1 gap-3 py-6 text-base" onClick={onRestart}>
+          <Button className="flex-1 gap-3 py-6 text-base" onClick={onRestart} data-test="result-button-restart">
             <RotateCcw size={20} />
             Fazer Novamente
           </Button>
