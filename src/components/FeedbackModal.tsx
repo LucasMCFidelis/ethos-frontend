@@ -104,6 +104,7 @@ export function FeedbackModal() {
           variant="outline"
           className="flex-1 gap-3 py-6 text-base"
           disabled={alreadySent}
+          data-test="result-button-open-feedback"
         >
           {alreadySent ? (
             <>
@@ -119,7 +120,7 @@ export function FeedbackModal() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
+      <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg" data-test="feedback-dialog">
         {showSuccess || alreadySent ? (
           <div className="flex flex-col items-center justify-center text-center py-8 px-4 space-y-6" data-test="feedback-success">
             <div className="rounded-full bg-secondary-500/10 p-4">
@@ -157,7 +158,7 @@ export function FeedbackModal() {
 
             <div className="space-y-8 max-w-[80%] sm:max-w-full">
               {/* Avaliação */}
-              <section className="space-y-3 ">
+              <section className="space-y-3 " data-test="feedback-rate">
                 <Label>Como você avaliaria o resultado?</Label>
 
                 <div className="flex gap-2">
@@ -197,7 +198,7 @@ export function FeedbackModal() {
               </section>
 
               {/* Objetivo */}
-              <section className="space-y-4">
+              <section className="space-y-4" data-test="feedback-use-objective">
                 <Label>
                   Qual é seu principal objetivo ao utilizar o Ethos? (Selecione
                   uma opção)
