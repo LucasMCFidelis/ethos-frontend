@@ -197,7 +197,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <h2 className="mb-3">{question.text}</h2>
+              <h2 className="mb-3" data-test="questionnaire-question-text">{question.text}</h2>
               {question.description && (
                 <p className="text-base leading-relaxed">
                   {question.description}

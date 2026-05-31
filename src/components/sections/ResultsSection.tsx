@@ -107,7 +107,7 @@ export function ResultsSection({ result, onRestart }: Props) {
                       style={{ borderRadius: "var(--radius)" }}
                     >
                       <h4>Ações Recomendadas</h4>
-                      <ul className="space-y-3">
+                      <ul className="space-y-3" data-test="result-actions-list">
                         {result.actions.map((action, i) => (
                           <li key={i} className="flex items-start gap-3">
                             <div className="mt-2 w-2 h-2 rounded-full bg-primary flex-shrink-0" />

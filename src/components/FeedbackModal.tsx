@@ -121,7 +121,7 @@ export function FeedbackModal() {
 
       <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
         {showSuccess || alreadySent ? (
-          <div className="flex flex-col items-center justify-center text-center py-8 px-4 space-y-6">
+          <div className="flex flex-col items-center justify-center text-center py-8 px-4 space-y-6" data-test="feedback-success">
             <div className="rounded-full bg-secondary-500/10 p-4">
               <CheckCircle2
                 className="h-16 w-16 text-secondary-500"
