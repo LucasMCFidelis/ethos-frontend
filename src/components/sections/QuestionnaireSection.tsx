@@ -173,6 +173,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
   return (
     <section
       id="questionnaire"
+      data-test="questionnaire-container"
       className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background scroll-mt-20 md:scroll-mt-24"
     >
       <div className="container mx-auto px-4 sm:px-6 space-y-6 md:max-w-3xl">
