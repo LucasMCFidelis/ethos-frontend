@@ -92,6 +92,7 @@ export function ResultsSection({ result, onRestart }: Props) {
                     <Button
                       variant="ghost"
                       className="gap-2 px-2 text-primary hover:text-primary"
+                      data-test="result-button-toggle-actions"
                     >
                       <ChevronDown
                         size={20}

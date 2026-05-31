@@ -256,6 +256,7 @@ export function FeedbackModal() {
                   placeholder="Descreva o novo recurso que você gostaria de implementar..."
                   value={form.suggestion}
                   className="resize-none"
+                  data-test="feedback-suggestion"
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,

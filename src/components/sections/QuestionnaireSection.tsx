@@ -219,6 +219,8 @@ export function QuestionnaireSection({ onComplete }: Props) {
                   }}
                   aria-pressed={selected === opt}
                   disabled={loading}
+                  data-test="questionnaire-answer-option"
+                  data-test-index={index}
                 >
                   {OPTION_LABELS[opt] ?? opt}
                 </Button>
