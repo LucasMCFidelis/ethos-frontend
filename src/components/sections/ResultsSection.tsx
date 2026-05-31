@@ -64,7 +64,7 @@ export function ResultsSection({ result, onRestart }: Props) {
   } = levelConfig[result.key] ?? levelConfig[""];
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-background" id="results">
+    <section className="py-12 sm:py-16 lg:py-20 bg-background" id="results" data-test="result-container">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-foreground">Resultado da Análise</h2>
@@ -76,9 +76,9 @@ export function ResultsSection({ result, onRestart }: Props) {
         >
           <div className="grid lg:grid-cols-[1fr_200px]">
             <CardContent className="p-6 sm:p-8 space-y-6">
-              <h3>{result.label}</h3>
+              <h3 data-test="result-label">{result.label}</h3>
 
-              <p className="text-foreground text-base leading-relaxed">
+              <p className="text-foreground text-base leading-relaxed" data-test="result-description">
                 {result.description}
               </p>
 
