@@ -180,12 +180,12 @@ export function QuestionnaireSection({ onComplete }: Props) {
         <div className="w-full space-y-3">
           <ResetQuestionnaireModal />
           <div className="flex justify-between">
-            <span>
+            <span data-test="questionnaire-progress-text">
               Questão {currentQuestion} de {sessionMaxQuestions}
             </span>
             <span className="ml-auto">{porcentagem}%</span>
           </div>
-          <Progress value={porcentagem} id="progress-upload" />
+          <Progress value={porcentagem} id="progress-upload" data-test="questionnaire-progress-bar" />
         </div>
         <Card
           style={{ borderRadius: "calc(var(--radius) + 8px)" }}
