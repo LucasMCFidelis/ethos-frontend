@@ -25,10 +25,13 @@ const navLinks = [
 ];
 
 const Header = ({ onNavigate }: HeaderProps) => {
-  const { startMutation, handleStartQuiz } = useSimulation();
+  const { startMutation, startOrigin, handleStartQuiz } = useSimulation();
   const { isOpen: isMobileMenuOpen, setIsOpen: setMobileMenuOpen, close: closeMobileMenu } = useMobileMenu();
   const navigate = useNavigate();
   const location = useLocation();
+ 
+  const START_ORIGIN_ID = "header"
+  const isPending = startMutation.isPending && startOrigin === START_ORIGIN_ID
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -49,10 +52,10 @@ const Header = ({ onNavigate }: HeaderProps) => {
     closeMobileMenu();
     if (location.pathname !== "/") {
       navigate("/");
-      setTimeout(() => handleStartQuiz(), 50);
+      setTimeout(() => handleStartQuiz(START_ORIGIN_ID), 50);
       return;
     }
-    handleStartQuiz();
+    handleStartQuiz(START_ORIGIN_ID);
   };
 
   return (
@@ -85,7 +88,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           disabled={startMutation.isPending}
           className="w-40 hidden md:flex"
         >
-          {startMutation.isPending ? (
+          {isPending ? (
             <>
               Começando Teste
               <Spinner />
@@ -126,7 +129,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
               disabled={startMutation.isPending}
               className="mt-2 text-base"
             >
-              {startMutation.isPending ? (
+              {isPending ? (
                 <>
                   Começando Teste
                   <Spinner />

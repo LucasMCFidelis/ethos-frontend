@@ -96,7 +96,7 @@ npm run lint          # verifica o código com ESLint
 | Ambiente | URL |
 |---|---|
 | Desenvolvimento | https://ethos-frontend-develop.onrender.com |
-| Produção | `<!-- URL de produção -->` |
+| Produção | https://ethos.pipocaagil.com.br |
 
 ---
 

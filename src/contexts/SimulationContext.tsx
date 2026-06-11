@@ -24,6 +24,8 @@ import {
 const SESSION_KEY = "ethos:sessionId";
 const SESSION_MAX_QUESTIONS_KEY = "ethos:sessionMaxQuestions";
 
+export type StartOrigin = "hero" | "header" | null;
+
 export interface FeedbackPayload {
   rate: number;
   useObjective: string;
@@ -58,6 +60,8 @@ interface SimulationContextValue {
   setHistoryIndex: React.Dispatch<React.SetStateAction<number>>;
   setSelected: React.Dispatch<React.SetStateAction<string | null>>;
 
+  startOrigin: StartOrigin;
+
   startMutation: UseMutationResult<
     { sessionId: string } & QuestionStep,
     Error,
@@ -84,7 +88,10 @@ interface SimulationContextValue {
 
   feedbackMutation: UseMutationResult<unknown, Error, FeedbackPayload>;
 
+  deleteSessionMutation: UseMutationResult<void, Error, void>;
+
   start: (trackId?: string) => void;
+  deleteSession: () => void;
   answer: (questionId: string, answerValue: string) => void;
   loadQuestionFromTrack: (
     questionId: string,
@@ -97,7 +104,7 @@ interface SimulationContextValue {
 
   getSessionMaxQuestions: () => number;
   reset: () => void;
-  handleStartQuiz: () => void;
+  handleStartQuiz: (origin: StartOrigin) => void;
   handleComplete: (r: ResultStep["result"]) => void;
   handleRestart: () => void;
 
@@ -145,6 +152,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
 
   const [showQuestionnaire, setShowQuestionnaire] = useState(() => hasDraft());
   const [isRestoringDraft, setIsRestoringDraft] = useState(() => hasDraft());
+
+  const [startOrigin, setStartOrigin] = useState<StartOrigin>(null);
 
   // Shared questionnaire state
   const [history, setHistory] = useState<QuestionnaireHistoryEntry[]>([
@@ -254,7 +263,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
     onError: (error, vars) => {
       if (isServerError(error))
-        handleServerError({ kind: "loadQuestion", questionId: vars.questionId });
+        handleServerError({
+          kind: "loadQuestion",
+          questionId: vars.questionId,
+        });
     },
   });
 
@@ -298,6 +310,28 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const deleteSessionMutation = useMutation({
+    mutationFn: async () => {
+      const sessionId = getSessionId();
+
+      if (!sessionId) {
+        throw new Error("Sessão não encontrada.");
+      }
+
+      await api.delete(`/simulation/sessions/${sessionId}`);
+    },
+
+    onSuccess: () => {
+      reset();
+    },
+
+    onError: (error) => {
+      if (isServerError(error)) {
+        handleServerError({ kind: "unknown" });
+      }
+    },
+  });
+
   function start(trackId = "confidencialidade") {
     startMutation.mutate(trackId);
   }
@@ -332,6 +366,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     feedbackMutation.mutate(payload, options);
   }
 
+  function deleteSession() {
+    deleteSessionMutation.mutate();
+  }
+
   function reset() {
     clearSessionId();
     clearSessionMaxQuestions();
@@ -341,21 +379,24 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     setHistory([{ id: "q1", response: null }]);
     setHistoryIndex(0);
     setSelected(null);
+    setStartOrigin(null);
 
     startMutation.reset();
     answerMutation.reset();
     loadQuestionFromTrackMutation.reset();
     loadAnsweredStepMutation.reset();
     feedbackMutation.reset();
+    deleteSessionMutation.reset();
   }
 
-  function handleStartQuiz() {
+  function handleStartQuiz(origin: StartOrigin) {
     if (IS_MAINTENANCE) {
       navigate("/maintenance");
       return;
     }
     reset();
     setResult(null);
+    setStartOrigin(origin);
     setShowQuestionnaire(true);
     start();
   }
@@ -470,13 +511,17 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
         setHistoryIndex,
         setSelected,
 
+        startOrigin,
+
         startMutation,
         answerMutation,
         loadQuestionFromTrackMutation,
         loadAnsweredStepMutation,
         feedbackMutation,
+        deleteSessionMutation,
 
         start,
+        deleteSession,
         answer,
         loadQuestionFromTrack,
         loadAnsweredStep,

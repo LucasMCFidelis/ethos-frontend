@@ -173,18 +173,19 @@ export function QuestionnaireSection({ onComplete }: Props) {
   return (
     <section
       id="questionnaire"
+      data-test="questionnaire-container"
       className="flex flex-col items-center gap-6 md:gap-12 py-12 sm:py-16 lg:py-20 bg-background scroll-mt-20 md:scroll-mt-24"
     >
       <div className="container mx-auto px-4 sm:px-6 space-y-6 md:max-w-3xl">
         <div className="w-full space-y-3">
           <ResetQuestionnaireModal />
           <div className="flex justify-between">
-            <span>
+            <span data-test="questionnaire-progress-text">
               Questão {currentQuestion} de {sessionMaxQuestions}
             </span>
             <span className="ml-auto">{porcentagem}%</span>
           </div>
-          <Progress value={porcentagem} id="progress-upload" />
+          <Progress value={porcentagem} id="progress-upload" data-test="questionnaire-progress-bar" />
         </div>
         <Card
           style={{ borderRadius: "calc(var(--radius) + 8px)" }}
@@ -197,7 +198,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <h2 className="mb-3">{question.text}</h2>
+              <h2 className="mb-3" data-test="questionnaire-question-text">{question.text}</h2>
               {question.description && (
                 <p className="text-base leading-relaxed">
                   {question.description}
@@ -219,6 +220,8 @@ export function QuestionnaireSection({ onComplete }: Props) {
                   }}
                   aria-pressed={selected === opt}
                   disabled={loading}
+                  data-test="questionnaire-answer-option"
+                  data-test-index={index}
                 >
                   {OPTION_LABELS[opt] ?? opt}
                 </Button>
@@ -251,6 +254,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
                 className="w-full py-6 text-base"
                 onClick={handleNext}
                 disabled={!selected || loading}
+                data-test="questionnaire-button-next"
               >
                 {loading ? (
                   <>

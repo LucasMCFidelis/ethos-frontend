@@ -44,10 +44,17 @@ export function FeedbackModal() {
   const [form, setForm] = useState({
     rate: null as number | null,
     useObjective: null as string | null,
+    otherObjective: "",
     suggestion: "",
   });
 
-  const canSubmit = form.rate !== null && form.useObjective !== null;
+  const OTHER_OPTION = "Outro (por favor, especifique)";
+  const isOtherSelected = form.useObjective === OTHER_OPTION;
+
+  const canSubmit =
+    form.rate !== null &&
+    form.useObjective !== null &&
+    (!isOtherSelected || form.otherObjective.trim().length > 0);
 
   const loading = feedbackMutation.isPending;
   const alreadySent = feedbackMutation.isSuccess;
@@ -56,6 +63,7 @@ export function FeedbackModal() {
     setForm({
       rate: null,
       useObjective: null,
+      otherObjective: "",
       suggestion: "",
     });
 
@@ -73,7 +81,9 @@ export function FeedbackModal() {
     sendFeedback(
       {
         rate: form.rate!,
-        useObjective: form.useObjective!,
+        useObjective: isOtherSelected
+          ? `Outro: ${form.otherObjective.trim()}`
+          : form.useObjective!,
         suggestion: form.suggestion || undefined,
       },
       {
@@ -94,6 +104,7 @@ export function FeedbackModal() {
           variant="outline"
           className="flex-1 gap-3 py-6 text-base"
           disabled={alreadySent}
+          data-test="result-button-open-feedback"
         >
           {alreadySent ? (
             <>
@@ -109,9 +120,9 @@ export function FeedbackModal() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg">
+      <DialogContent className="max-w-[90vw] md:max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg" data-test="feedback-dialog">
         {showSuccess || alreadySent ? (
-          <div className="flex flex-col items-center justify-center text-center py-8 px-4 space-y-6">
+          <div className="flex flex-col items-center justify-center text-center py-8 px-4 space-y-6" data-test="feedback-success">
             <div className="rounded-full bg-secondary-500/10 p-4">
               <CheckCircle2
                 className="h-16 w-16 text-secondary-500"
@@ -147,7 +158,7 @@ export function FeedbackModal() {
 
             <div className="space-y-8 max-w-[80%] sm:max-w-full">
               {/* Avaliação */}
-              <section className="space-y-3 ">
+              <section className="space-y-3 " data-test="feedback-rate">
                 <Label>Como você avaliaria o resultado?</Label>
 
                 <div className="flex gap-2">
@@ -187,7 +198,7 @@ export function FeedbackModal() {
               </section>
 
               {/* Objetivo */}
-              <section className="space-y-4">
+              <section className="space-y-4" data-test="feedback-use-objective">
                 <Label>
                   Qual é seu principal objetivo ao utilizar o Ethos? (Selecione
                   uma opção)
@@ -199,7 +210,7 @@ export function FeedbackModal() {
                       key={item}
                       size="lg"
                       variant="outline"
-                      className={`py-3 text-md text-wrap font-normal h-fit text-start hover:bg-transparent ${
+                      className={`py-3 text-md text-wrap font-normal h-fit sm:h-auto text-start hover:bg-transparent ${
                         form.useObjective == item
                           ? "border-2 border-primary-700"
                           : ""
@@ -210,6 +221,28 @@ export function FeedbackModal() {
                     </Button>
                   ))}
                 </div>
+
+                {isOtherSelected && (
+                  <div className="space-y-2 pt-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <Label htmlFor="otherObjective">
+                      Por favor, especifique seu objetivo
+                    </Label>
+                    <Textarea
+                      id="otherObjective"
+                      rows={2}
+                      placeholder="Descreva seu objetivo ao utilizar o Ethos..."
+                      value={form.otherObjective}
+                      className="resize-none"
+                      data-test="feedback-other-objective-input"
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          otherObjective: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                )}
               </section>
 
               {/* Sugestão */}
@@ -224,6 +257,7 @@ export function FeedbackModal() {
                   placeholder="Descreva o novo recurso que você gostaria de implementar..."
                   value={form.suggestion}
                   className="resize-none"
+                  data-test="feedback-suggestion"
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,
@@ -248,6 +282,7 @@ export function FeedbackModal() {
                   className="flex-1 py-3 sm:py-6 gap-2 disabled:bg-muted disabled:text-neutral-500"
                   onClick={handleSubmit}
                   disabled={!canSubmit || loading}
+                  data-test="feedback-button-submit"
                 >
                   <Send className="h-4 w-4" />
                   {loading ? "Enviando..." : "Enviar Contribuição"}

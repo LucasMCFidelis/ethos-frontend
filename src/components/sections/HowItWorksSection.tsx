@@ -41,7 +41,7 @@ const steps: Step[] = [
 
 export function HowItWorksSection() {
   return (
-    <section id="como-funciona" className="py-20 bg-muted">
+    <section id="como-funciona" className="py-20">
       <div className="container">
         <h2 className="text-center text-foreground mb-12">
           Como o Ethos Funciona
