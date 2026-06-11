@@ -51,7 +51,7 @@ export const members: TeamMember[] = [
     position: "QA & Dev Fullstack",
     imageUrl: "/team/lucas-fidelis.webp",
     gitHub: "https://github.com/LucasMCFidelis",
-    portfolio: "https://github.com/LucasMCFidelis",
+    portfolio: "https://portfolio-lucasfidelis.vercel.app/",
     linkedIn: "https://www.linkedin.com/in/lucas-fidelis-778705149/",
   },
 ];
