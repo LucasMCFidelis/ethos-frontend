@@ -8,33 +8,89 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     steps:
-      # 1️⃣ Checkout
-      - name: Checkout repository
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint --if-present
+
+      - run: npm run build
+
+  e2e-tests:
+    name: E2E Tests
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Frontend
         uses: actions/checkout@v4
 
-      # 2️⃣ Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
 
-      # 3️⃣ Dependencies
-      - name: Install dependencies
+      - name: Install Frontend Dependencies
         run: npm ci
 
-      # 4️⃣ Lint
-      - name: Run lint
-        run: npm run lint --if-present
+      - name: Checkout API
+        uses: actions/checkout@v4
+        with:
+          repository: LucasMCFidelis/ethos-api
+          path: ethos-api
 
-      # 5️⃣ Build
-      - name: Build
-        run: npm run build
+      - name: Checkout QA
+        uses: actions/checkout@v4
+        with:
+          repository: LucasMCFidelis/ethos-qa
+          path: cypress-tests
 
-      # 6️⃣ Deploy Dev
-      - name: Deploy Dev
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+      - name: Start API Stack
+        working-directory: ethos-api
+        run: docker compose up -d
+
+      - name: Wait for API
+        uses: ./cypress-tests/.github/actions/wait-for-api
+        with:
+          url: http://localhost:3000/api/v1/health
+
+      - name: Start Frontend
+        env:
+          VITE_API_URL: http://localhost:3000/api/v1
+        run: |
+          npm run dev -- --host 0.0.0.0 &
+          npx wait-on http://localhost:8080
+
+      - name: Run QA Suite
+        uses: ./cypress-tests/.github/actions/run-cypress
+        with:
+          qa_path: cypress-tests
+          base_url: http://localhost:8080
+          api_url: http://localhost:3000/api/v1
+          smoke_command: npm run cy:e2e -- --expose grepTags=@smoke
+          regression_command: npm run cy:e2e -- --expose grepTags="-@smoke"
+
+      - name: Teardown API
+        if: always()
+        working-directory: ethos-api
+        run: docker compose down -v
+
+  deploy-dev:
+    name: Deploy Dev
+    needs: [ci, e2e-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render Deploy
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL_DEV }}
         run: curl "$deploy_url"
