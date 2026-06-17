@@ -41,30 +41,20 @@ jobs:
       - name: Install Frontend Dependencies
         run: npm ci
 
-      - name: Checkout API
-        uses: actions/checkout@v4
-        with:
-          repository: LucasMCFidelis/ethos-api
-          path: ethos-api
-
       - name: Checkout QA
         uses: actions/checkout@v4
         with:
           repository: LucasMCFidelis/ethos-qa
           path: cypress-tests
 
-      - name: Start API Stack
-        working-directory: ethos-api
-        run: docker compose up -d
-
       - name: Wait for API
         uses: ./cypress-tests/.github/actions/wait-for-api
         with:
-          url: http://localhost:3000/api/v1/health
+          url: ${{ vars.API_URL_DEV }}/health
 
       - name: Start Frontend
         env:
-          VITE_API_URL: http://localhost:3000/api/v1
+          VITE_API_URL: ${{ vars.API_URL_DEV }}
         run: |
           npm run dev -- --host 0.0.0.0 &
           npx wait-on http://localhost:8080
@@ -74,14 +64,9 @@ jobs:
         with:
           qa_path: cypress-tests
           base_url: http://localhost:8080
-          api_url: http://localhost:3000/api/v1
+          api_url: ${{ vars.API_URL_DEV }}
           smoke_command: npm run cy:e2e -- --expose grepTags=@smoke
           regression_command: npm run cy:e2e -- --expose grepTags="-@smoke"
-
-      - name: Teardown API
-        if: always()
-        working-directory: ethos-api
-        run: docker compose down -v
 
   deploy-dev:
     name: Deploy Dev
