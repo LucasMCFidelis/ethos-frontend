@@ -1,5 +1,3 @@
-// components/ResultsSection.tsx
-
 import { useState } from "react";
 import {
   AlertTriangle,
@@ -12,7 +10,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,19 +25,23 @@ const levelConfig: Record<
     icon: typeof Info;
     iconBgColor: string;
     iconTextColor?: string;
+    typeLevel?: string
   }
 > = {
   alto_risco: {
     icon: ShieldAlert,
     iconBgColor: "bg-destructive",
+    typeLevel: "Urgência"
   },
   moderado: {
     icon: AlertTriangle,
     iconBgColor: "bg-warning-500",
+    typeLevel: "Atenção"
   },
   aceitavel: {
     icon: ShieldCheck,
     iconBgColor: "bg-secondary-500",
+    typeLevel: "Conformidade"
   },
   "": {
     icon: Info,
@@ -61,6 +62,7 @@ export function ResultsSection({ result, onRestart }: Props) {
     icon: Icon,
     iconBgColor,
     iconTextColor = "text-white",
+    typeLevel
   } = levelConfig[result.key] ?? levelConfig[""];
 
   return (
@@ -124,7 +126,7 @@ export function ResultsSection({ result, onRestart }: Props) {
               <div className="grid gap-4 md:grid-cols-2">
                 {result.level && (
                   <div>
-                    <h4>Nível de Conformidade</h4>
+                    <h4>Nível de {typeLevel}</h4>
                     <p>{result.level}</p>
                   </div>
                 )}
