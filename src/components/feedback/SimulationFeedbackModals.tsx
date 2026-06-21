@@ -63,7 +63,10 @@ export function SimulationFeedbackModals() {
     (startMutation.isError ||
       (loadQuestionFromTrackMutation.isError && !corruptedSession));
   const answerErrorOpen =
-    !dismissedAnswerError && answerMutation.isError && !corruptedSession;
+    !dismissedAnswerError &&
+    answerMutation.isError &&
+    !corruptedSession &&
+    !isExpiredSession;
   const corruptedOpen = !dismissedCorrupted && corruptedSession;
   const expiredErrorOpen = !dismissedExpired && isExpiredSession;
 
