@@ -4,6 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 import { LoadQuestionnaireErrorModal } from "./LoadQuestionnaireErrorModal";
 import { SaveAnswersErrorModal } from "./SaveAnswersErrorModal";
 import { CorruptedDataModal } from "./CorruptedDataModal";
+import { ExpiredSessionModal } from "./ExpiredSessionModal";
+import { ApiError } from "@/lib/api";
 
 /**
  * Global modals layer for simulation errors.
@@ -19,12 +21,14 @@ export function SimulationFeedbackModals() {
     retryLoad,
     retryAnswer,
     clearAndRestart,
+    handleRestart
   } = useSimulation();
   const { toast } = useToast();
 
   const [dismissedLoadError, setDismissedLoadError] = useState(false);
   const [dismissedAnswerError, setDismissedAnswerError] = useState(false);
   const [dismissedCorrupted, setDismissedCorrupted] = useState(false);
+  const [dismissedExpired, setDismissedExpired] = useState(false);
 
   // Reset dismissal whenever a new error appears
   useEffect(() => {
@@ -34,8 +38,16 @@ export function SimulationFeedbackModals() {
   }, [startMutation.isError, loadQuestionFromTrackMutation.isError]);
 
   useEffect(() => {
-    if (answerMutation.isError) setDismissedAnswerError(false);
-  }, [answerMutation.isError]);
+    if (!answerMutation.isError) return;
+
+    const status = (answerMutation.error as ApiError | null)?.status;
+
+    if (status === 410) {
+      setDismissedExpired(false);
+    } else {
+      setDismissedAnswerError(false);
+    }
+  }, [answerMutation.isError, answerMutation.error]);
 
   const corruptedSession = useMemo(() => {
     const errMsg =
@@ -56,6 +68,7 @@ export function SimulationFeedbackModals() {
   const answerErrorOpen =
     !dismissedAnswerError && answerMutation.isError && !corruptedSession;
   const corruptedOpen = !dismissedCorrupted && corruptedSession;
+  const expiredErrorOpen = !dismissedExpired;
 
   const handleSaveDraft = () => {
     const ok = saveCurrentDraft();
@@ -93,6 +106,15 @@ export function SimulationFeedbackModals() {
           setDismissedCorrupted(true);
           clearAndRestart();
         }}
+      />
+      <ExpiredSessionModal
+        open={expiredErrorOpen}
+        onOpenChange={(o) => !o && setDismissedExpired(true)}
+        onStartNewSession={() => {
+          setDismissedExpired(true);
+          clearAndRestart();
+        }}
+        extendCancelAction={handleRestart}
       />
     </>
   );

@@ -30,6 +30,7 @@ export interface FeedbackDialogProps {
   primaryAction: FeedbackDialogAction;
   secondaryAction?: FeedbackDialogAction;
   cancelLabel?: string;
+  extendCancelAction?: () => void;
   hint?: string;
   testId?: string;
 }
@@ -58,12 +59,16 @@ export function FeedbackDialog({
   primaryAction,
   secondaryAction,
   cancelLabel = "Cancelar",
+  extendCancelAction,
   hint = "Dica: Pressione ESC para fechar ou clique fora do modal",
   testId,
 }: FeedbackDialogProps) {
   const styles = VARIANT_STYLES[variant];
 
-  const handleCancel = () => onOpenChange(false);
+  const handleCancel = () => {
+    onOpenChange(false)
+    extendCancelAction()
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
