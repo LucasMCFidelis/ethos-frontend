@@ -21,7 +21,7 @@ export function SimulationFeedbackModals() {
     retryLoad,
     retryAnswer,
     clearAndRestart,
-    handleRestart
+    handleRestart,
   } = useSimulation();
   const { toast } = useToast();
 
@@ -41,12 +41,7 @@ export function SimulationFeedbackModals() {
     if (!answerMutation.isError) return;
 
     const status = (answerMutation.error as ApiError | null)?.status;
-
-    if (status === 410) {
-      setDismissedExpired(false);
-    } else {
-      setDismissedAnswerError(false);
-    }
+    if (status !== 410) setDismissedAnswerError(false);
   }, [answerMutation.isError, answerMutation.error]);
 
   const corruptedSession = useMemo(() => {
@@ -56,6 +51,8 @@ export function SimulationFeedbackModals() {
       "";
     return /sess(ã|a)o n(ã|a)o encontrada/i.test(errMsg);
   }, [answerMutation.error, loadQuestionFromTrackMutation.error]);
+  const isExpiredSession =
+    (answerMutation.error as ApiError | null)?.status === 410;
 
   useEffect(() => {
     if (corruptedSession) setDismissedCorrupted(false);
@@ -68,7 +65,7 @@ export function SimulationFeedbackModals() {
   const answerErrorOpen =
     !dismissedAnswerError && answerMutation.isError && !corruptedSession;
   const corruptedOpen = !dismissedCorrupted && corruptedSession;
-  const expiredErrorOpen = !dismissedExpired;
+  const expiredErrorOpen = !dismissedExpired && isExpiredSession;
 
   const handleSaveDraft = () => {
     const ok = saveCurrentDraft();
