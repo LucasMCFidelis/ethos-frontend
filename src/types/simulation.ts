@@ -19,6 +19,7 @@ export interface ResultStep {
     action_type: string;
     level: string;
     actions: string[];
+    fonts?: Array<{ label: string; url?: string }>;
   };
 }
 

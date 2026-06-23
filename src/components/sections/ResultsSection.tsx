@@ -7,6 +7,8 @@ import {
   MessageSquare,
   ShieldCheck,
   ChevronDown,
+  GraduationCap,
+  Landmark,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +20,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import type { ResultStep } from "@/types/simulation";
 import { FeedbackModal } from "../FeedbackModal";
+import { Badge } from "../ui/badge";
 
 const levelConfig: Record<
   string,
@@ -25,23 +28,23 @@ const levelConfig: Record<
     icon: typeof Info;
     iconBgColor: string;
     iconTextColor?: string;
-    typeLevel?: string
+    typeLevel?: string;
   }
 > = {
   alto_risco: {
     icon: ShieldAlert,
     iconBgColor: "bg-destructive",
-    typeLevel: "Urgência"
+    typeLevel: "Urgência",
   },
   moderado: {
     icon: AlertTriangle,
     iconBgColor: "bg-warning-500",
-    typeLevel: "Atenção"
+    typeLevel: "Atenção",
   },
   aceitavel: {
     icon: ShieldCheck,
     iconBgColor: "bg-secondary-500",
-    typeLevel: "Conformidade"
+    typeLevel: "Conformidade",
   },
   "": {
     icon: Info,
@@ -62,11 +65,15 @@ export function ResultsSection({ result, onRestart }: Props) {
     icon: Icon,
     iconBgColor,
     iconTextColor = "text-white",
-    typeLevel
+    typeLevel,
   } = levelConfig[result.key] ?? levelConfig[""];
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-background" id="results" data-test="result-container">
+    <section
+      className="py-12 sm:py-16 lg:py-20 bg-background"
+      id="results"
+      data-test="result-container"
+    >
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-foreground">Resultado da Análise</h2>
@@ -80,7 +87,10 @@ export function ResultsSection({ result, onRestart }: Props) {
             <CardContent className="p-6 sm:p-8 space-y-6">
               <h3 data-test="result-label">{result.label}</h3>
 
-              <p className="text-foreground text-base leading-relaxed" data-test="result-description">
+              <p
+                className="text-foreground text-base leading-relaxed"
+                data-test="result-description"
+              >
                 {result.description}
               </p>
 
@@ -137,6 +147,40 @@ export function ResultsSection({ result, onRestart }: Props) {
                   </div>
                 )}
               </div>
+
+              {result.fonts && (
+                <div
+                  className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-100 items-start"
+                  data-purpose="legal-citation"
+                >
+                  <Badge
+                    variant="outline"
+                    className="gap-2 py-2 min-w-fit rounded-md text-primary bg-primary/5 shrink-0"
+                  >
+                    <Landmark size={20} />
+                    <span className="font-bold text-brand-primary tracking-widest uppercase">
+                      LEGAL TAG
+                    </span>
+                  </Badge>
+
+                  <div className="grid md:grid-cols-[auto_1fr] gap-x-1 gap-y-2 sm:pt-2 text-muted-foreground italic w-full items-center">
+                    <span className="uppercase">BASE LEGAL:</span>
+                    {result.fonts.map((font, index) => (
+                      <>
+                        {index > 0 && <span />}
+                        <a
+                          key={font.label}
+                          href={font.url}
+                          className="w-fit"
+                          rel="noopener noreferrer"
+                        >
+                          {font.label}
+                        </a>
+                      </>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
 
             {/* Ícone lateral */}
@@ -154,11 +198,15 @@ export function ResultsSection({ result, onRestart }: Props) {
 
         {/* Ações */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button className="flex-1 gap-3 py-6 text-base" onClick={onRestart} data-test="result-button-restart">
+          <Button
+            className="flex-1 gap-3 py-6 text-base"
+            onClick={onRestart}
+            data-test="result-button-restart"
+          >
             <RotateCcw size={20} />
             Fazer Novamente
           </Button>
-          <FeedbackModal/>
+          <FeedbackModal />
         </div>
 
         <Separator className="my-8 sm:my-12" />
