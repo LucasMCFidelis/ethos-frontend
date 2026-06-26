@@ -51,8 +51,11 @@ export function SimulationFeedbackModals() {
       "";
     return /sess(ã|a)o n(ã|a)o encontrada/i.test(errMsg);
   }, [answerMutation.error, loadQuestionFromTrackMutation.error]);
-  const isExpiredSession =
-    (answerMutation.error as ApiError | null)?.status === 410;
+  const isExpiredSession = useMemo(() => {
+    const expire = (answerMutation.error as ApiError | null)?.status === 410;
+    
+    return expire
+  }, [answerMutation.error]);
 
   useEffect(() => {
     if (corruptedSession) setDismissedCorrupted(false);
