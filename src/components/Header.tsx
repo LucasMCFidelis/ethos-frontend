@@ -21,22 +21,37 @@ const navLinks = [
     href: "#sobre-etica",
     testId: "nav-link-about",
   },
+  {
+    label: "Biblioteca",
+    href: "/library",
+    testId: "nav-link-library",
+  },
   { label: "Contato", href: "#contato", testId: "nav-link-contact" },
 ];
 
 const Header = ({ onNavigate }: HeaderProps) => {
   const { startMutation, startOrigin, handleStartQuiz } = useSimulation();
-  const { isOpen: isMobileMenuOpen, setIsOpen: setMobileMenuOpen, close: closeMobileMenu } = useMobileMenu();
+  const {
+    isOpen: isMobileMenuOpen,
+    setIsOpen: setMobileMenuOpen,
+    close: closeMobileMenu,
+  } = useMobileMenu();
   const navigate = useNavigate();
   const location = useLocation();
- 
-  const START_ORIGIN_ID = "header"
-  const isPending = startMutation.isPending && startOrigin === START_ORIGIN_ID
+
+  const START_ORIGIN_ID = "header";
+  const isPending = startMutation.isPending && startOrigin === START_ORIGIN_ID;
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const section = href.replace("#", "");
     closeMobileMenu();
+
+    if (href.startsWith("/")) {
+      navigate(href);
+      return;
+    }
+
+    const section = href.replace("#", "");
     if (onNavigate) {
       onNavigate(section);
       return;

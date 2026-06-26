@@ -5,6 +5,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useNavigate } from "react-router-dom";
+import PageWrapper from "@/pages/PageWrapper";
 
 const DEFAULT_LINKS = [
   { label: "Página inicial", href: "/" },
@@ -76,53 +77,52 @@ export function ErrorPage({
     navigate(href);
   };
   return (
-    <div className="flex min-h-screen justify-between flex-col">
-      <Header />
-      <main className="flex  flex-col items-center justify-center px-4 py-20 bg-background">
-        <div className="max-w-lg w-full text-center space-y-8">
-          <div className="flex justify-center">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
-              <Icon size={48} className="text-primary" strokeWidth={2} />
-            </div>
+    <PageWrapper extendContainerStyles="flex flex-col items-center justify-center px-4 py-20 bg-background">
+      <div className="max-w-lg w-full text-center space-y-8">
+        <div className="flex justify-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
+            <Icon size={48} className="text-primary" strokeWidth={2} />
           </div>
-
-          <div className="space-y-3 px-4">
-            {status && (
-              <p className="text-6xl font-extrabold text-primary uppercase tracking-widest">
-                {status}
-              </p>
-            )}
-            <h1 className="text-3xl font-bold text-foreground">{title}</h1>
-            <p className="text-muted-foreground text-base leading-relaxed">
-              {description}
-            </p>
-          </div>
-
-          <DefaultActions {...actionsProps} />
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Links Úteis</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              {DEFAULT_LINKS.map((link) => (
-                <Button
-                  asChild
-                  key={link.href}
-                  variant="outline"
-                  className="justify-between font-normal h-auto p-4"
-                >
-                  <a href={link.href} onClick={(e) => handleLinkClick(e, link.href)}>
-                    {link.label}
-                    <ArrowRightIcon className="text-primary" />
-                  </a>
-                </Button>
-              ))}
-            </CardContent>
-          </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+
+        <div className="space-y-3 px-4">
+          {status && (
+            <p className="text-6xl font-extrabold text-primary uppercase tracking-widest">
+              {status}
+            </p>
+          )}
+          <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+          <p className="text-muted-foreground text-base leading-relaxed">
+            {description}
+          </p>
+        </div>
+
+        <DefaultActions {...actionsProps} />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Links Úteis</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {DEFAULT_LINKS.map((link) => (
+              <Button
+                asChild
+                key={link.href}
+                variant="outline"
+                className="justify-between font-normal h-auto p-4"
+              >
+                <a
+                  href={link.href}
+                  onClick={(e) => handleLinkClick(e, link.href)}
+                >
+                  {link.label}
+                  <ArrowRightIcon className="text-primary" />
+                </a>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </PageWrapper>
   );
 }
