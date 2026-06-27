@@ -16,22 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
-const CARD_ICONS = {
-  check: CheckCircle2,
-  info: Eye,
-  alert: AlertCircle,
-  book: BookOpenText,
-} as const;
-
-const CardIcon = ({ icon = "check" }: { icon?: keyof typeof CARD_ICONS }) => {
-  const Icon = CARD_ICONS[icon];
-  return (
-    <div className="flex justify-center items-center size-fit p-2 rounded-md bg-primary/10">
-      <Icon className="text-primary" />
-    </div>
-  );
-};
+import Icon from "@/components/Icon";
 
 const ContentLabel = ({ label }: { label: string }) => (
   <label className="flex items-center gap-4 text-lg font-medium mb-5">
@@ -64,7 +49,7 @@ const ContentItem = ({ item }: { item: ContentItemData }) => {
     return (
       <Card>
         <CardContent className="grid grid-cols-[5%_1fr] gap-4 p-4">
-          <CardIcon icon={item.card.icon} />
+          <Icon icon={item.card.icon} />
           <div>
             <label className="flex items-center gap-4 text-lg font-medium">
               {item.label}
@@ -128,9 +113,7 @@ const LibraryDetails = () => {
 
       <Card className="mt-12 bg-primary-100">
         <CardContent className="grid grid-cols-[5%_1fr] gap-4 p-4">
-          <div className="flex justify-center items-center size-fit p-2">
-            <BookOpenText className="text-primary" />
-          </div>
+          <Icon icon="book" className="bg-transparent"/>
           <div className="space-y-5">
             <label className="text-lg font-medium">Fonte Normativa</label>
             {item.font.citation && (
