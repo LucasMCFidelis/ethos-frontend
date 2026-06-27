@@ -5,22 +5,15 @@ import {
   type ContentItemLeaf,
 } from "@/data/library.data";
 import PageWrapper from "./PageWrapper";
-import {
-  AlertCircle,
-  ArrowLeft,
-  BookOpenText,
-  CheckCircle2,
-  Eye,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Icon from "@/components/Icon";
 
 const ContentLabel = ({ label }: { label: string }) => (
-  <label className="flex items-center gap-4 text-lg font-medium mb-5">
-    <Badge className="w-8" />
+  <label className="flex items-center gap-3 text-body-lg font-medium mb-5 text-foreground">
+    <span className="h-2 w-2 md:w-8 rounded-full bg-primary shrink-0" />
     {label}
   </label>
 );
@@ -30,12 +23,16 @@ const SubItemList = ({ items }: { items: Array<ContentItemLeaf> }) => (
     {items.map((subItem, index) => (
       <div
         key={subItem.label}
-        className="flex gap-2 bg-primary/10 border-l-4 p-2 border-primary"
+        className="flex gap-3 bg-primary/10 border-l-4 p-4 border-primary rounded-r-md"
       >
-        <span className="text-muted-foreground w-20">{index + 1}</span>
-        <div>
-          <h5 className="font-medium">{subItem.label}</h5>
-          <p className="text-muted-foreground">{subItem.content}</p>
+        <span className="text-body-sm text-muted-foreground min-w-6 shrink-0">
+          {index + 1}
+        </span>
+        <div className="min-w-0">
+          <h5 className="font-medium text-foreground mb-1">{subItem.label}</h5>
+          <p className="text-body-sm text-muted-foreground">
+            {subItem.content}
+          </p>
         </div>
       </div>
     ))}
@@ -48,13 +45,15 @@ const ContentItem = ({ item }: { item: ContentItemData }) => {
   if (isString && item.card) {
     return (
       <Card>
-        <CardContent className="grid grid-cols-[5%_1fr] gap-4 p-4">
+        <CardContent className="flex items-start gap-4 p-4 md:p-6">
           <Icon icon={item.card.icon} />
-          <div>
-            <label className="flex items-center gap-4 text-lg font-medium">
+          <div className="min-w-0 flex-1">
+            <label className="block text-body-lg font-medium text-foreground mb-2">
               {item.label}
             </label>
-            <p className="text-muted-foreground">{item.content as string}</p>
+            <p className="text-body-sm text-muted-foreground">
+              {item.content as string}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -65,7 +64,9 @@ const ContentItem = ({ item }: { item: ContentItemData }) => {
     <>
       <ContentLabel label={item.label} />
       {isString ? (
-        <p className="text-muted-foreground">{item.content as string}</p>
+        <p className="text-body-md text-muted-foreground">
+          {item.content as string}
+        </p>
       ) : (
         <SubItemList items={item.content as ContentItemLeaf[]} />
       )}
@@ -85,40 +86,44 @@ const LibraryDetails = () => {
   }
 
   return (
-    <PageWrapper extendContainerStyles="container mx-auto py-10">
-      <Button asChild variant="link" className="text-primary px-0 mb-8">
+    <PageWrapper extendContainerStyles="container py-12 md:py-20">
+      <Button asChild variant="link" className="text-primary px-0 mb-6 md:mb-8">
         <a href="/library">
           <ArrowLeft />
           Voltar para Biblioteca
         </a>
       </Button>
 
-      <h1 className="mb-2">{item.title}</h1>
-      <p className="text-muted-foreground text-body-lg mb-8">
+      <h1 className="mb-3 text-foreground">{item.title}</h1>
+      <p className="text-body-lg text-muted-foreground mb-8 max-w-3xl">
         {item.elements.descriptionCurt}
       </p>
 
       {item.elements.imageUrl && (
         <div
-          className="w-full h-48 bg-cover bg-center rounded-lg mb-8"
+          className="w-full aspect-[16/9] md:aspect-[21/9] bg-cover bg-center rounded-lg mb-10"
           style={{ backgroundImage: `url(${item.elements.imageUrl})` }}
         />
       )}
 
-      {item.elements.items.map((contentItem) => (
-        <div key={contentItem.label} className="mb-8">
-          <ContentItem item={contentItem} />
-        </div>
-      ))}
+      <div className="space-y-8 md:space-y-10">
+        {item.elements.items.map((contentItem) => (
+          <div key={contentItem.label}>
+            <ContentItem item={contentItem} />
+          </div>
+        ))}
+      </div>
 
-      <Card className="mt-12 bg-primary-100">
-        <CardContent className="grid grid-cols-[5%_1fr] gap-4 p-4">
-          <Icon icon="book" className="bg-transparent"/>
-          <div className="space-y-5">
-            <label className="text-lg font-medium">Fonte Normativa</label>
+      <Card className="mt-12 bg-primary-100 border-primary-200">
+        <CardContent className="flex items-start gap-4 p-4 md:p-6">
+          <Icon icon="book" className="bg-transparent shrink-0" />
+          <div className="space-y-4 min-w-0 flex-1">
+            <label className="block text-body-lg font-medium text-foreground">
+              Fonte Normativa
+            </label>
             {item.font.citation && (
               <>
-                <p className="italic leading-relaxed text-muted-foreground">
+                <p className="italic text-body-sm text-muted-foreground">
                   "{item.font.citation}"
                 </p>
                 <Separator className="bg-primary-200" />
@@ -128,7 +133,7 @@ const LibraryDetails = () => {
               href={item.font.fontHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary font-bold block mt-5"
+              className="text-primary font-bold text-body-sm block break-words"
             >
               {item.font.fontLabel}
             </a>
