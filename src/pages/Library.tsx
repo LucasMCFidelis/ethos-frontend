@@ -12,7 +12,7 @@ import {
 
 const Library = () => {
   return (
-    <PageWrapper extendContainerStyles="container mx-auto py-10">
+    <PageWrapper extendContainerStyles="container py-12 md:py-20">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -24,14 +24,16 @@ const Library = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex flex-col mb-12">
-        <h1 className="mb-2">Biblioteca Ética em Atendimento Online</h1>
-        <p className="font-body-lg text-body-lg text-muted-foreground max-w-2xl">
+      <div className="flex flex-col mt-6 mb-10 md:mb-12">
+        <h1 className="mb-2 text-foreground">
+          Biblioteca Ética em Atendimento Online
+        </h1>
+        <p className="text-body-lg text-muted-foreground max-w-2xl">
           Recursos essenciais para profissionais da saúde sobre conformidade,
           privacidade e ética no teleatendimento.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
         {libraryData.map((item) => (
           <LibraryCardItem key={item.id} data={item} />
         ))}
