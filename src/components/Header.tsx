@@ -81,7 +81,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
         </a>
 
         {/* Desktop */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.testId}
@@ -101,7 +101,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           data-test="nav-button-start"
           onClick={handleStartCta}
           disabled={startMutation.isPending}
-          className="w-40 hidden md:flex"
+          className="w-40 hidden lg:flex"
         >
           {isPending ? (
             <>
@@ -115,7 +115,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
 
         {/* Mobile */}
         <Popover open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <PopoverTrigger asChild className="md:hidden">
+          <PopoverTrigger asChild className="lg:hidden">
             <button className="text-foreground" aria-label="Menu">
               <Menu size={22} />
             </button>
