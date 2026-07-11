@@ -222,6 +222,7 @@ export function QuestionnaireSection({ onComplete }: Props) {
                   disabled={loading}
                   data-test="questionnaire-answer-option"
                   data-test-index={index}
+                  data-test-value={opt}
                 >
                   {OPTION_LABELS[opt] ?? opt}
                 </Button>
